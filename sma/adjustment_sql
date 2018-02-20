@@ -1,0 +1,11 @@
+CREATE TABLE `adjustment_products` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `product_id` int(11) NOT NULL,
+ `warehouse_id` int(11) NOT NULL,
+ `adjust_qty_add` decimal(11,2) DEFAULT NULL,
+ `product_qty` decimal(11,2) NOT NULL,
+ `adjusted_by` tinyint(4) NOT NULL,
+ `adjustment_date` datetime NOT NULL,
+ `adjust_qty_remove` decimal(11,2) DEFAULT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1

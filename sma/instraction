@@ -1,0 +1,17 @@
+1) Sales Items table quantity column need to change  decimal(quantiy)
+2) product table quantity column need to change  decimal(quantiy,adjust quantiy)
+3) purchases Item table quantity column need to change  decimal(quantiy)
+4) warehouse_products  table quantity column need to change  decimal(quantiy)
+5) add column to warehouse_id to count_product(warehouse_id, change name $count_quantity, new column  $actual_county, and $actual_county will be null able)
+6) need to add column paid_amount at sales table
+
+
+
+need to add biller footer
+
+
+Item Purchased can be exchange within 24 hours with receipt.
+
+Item purchased can not be refunded for cash.
+
+Frozen item will not be returned or replaced.
