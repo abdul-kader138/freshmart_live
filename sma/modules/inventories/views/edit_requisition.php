@@ -114,7 +114,7 @@ $(document).ready(function() {
     });
 
     var newTr = $('<tr id="row_' + count + '"></tr>');
-    newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" readonly="readonly" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php if (TAX1) { ?><td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php } ?><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal('+ count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_'+ count +'">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+    newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php if (TAX1) { ?><td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php } ?><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal('+ count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_'+ count +'">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
     newTr.prependTo("#dyTable");
 
     count++;
@@ -325,7 +325,7 @@ $.each(tax_rates, function() {
 });
 
 var newTr = $('<tr id="row_' + count + '"></tr>');
-newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran" readonly="readonly" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php if (TAX1) { ?><td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php } ?><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal('+ count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_'+ count +'">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
+newTr.html('<td><input name="product' + count + '" type="hidden" value="' + item_code + '"><input class="span5 tran"  readonly="readonly" style="text-align:left;" name="item' + count + '" type="text" value="' + item_name + ' (' + item_code + ')"></td><?php if (TAX1) { ?><td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' + count + '" id="tax_rate-' + count + '">' + taxes + '</select></td><?php } ?><td><input class="input-block-level text-center" name="quantity' + count + '" id="qnt_' + count + '" type="text" value="1" onkeyup="getSubtottal('+ count + ')" onClick="this.select();"></td><td><input class="span2 tran" style="text-align:right;" name="unit_cost' + count + '" id="unit_cost' + count + '" type="text" value="' + item_cost + '"></td><td id="sub_'+ count +'">' + item_cost + '</td><td><i class="icon-trash tip del" id="' + count + '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td>');
 newTr.prependTo("#dyTable");
 
 count++;
@@ -387,7 +387,7 @@ if($success_message) { echo "<div class=\"alert alert-success\"><button type=\"b
 <p><?php echo $this->lang->line("enter_info"); ?></p>
 
 <?php $attrib = array('class' => 'form-horizontal', 'id' => 'addSale_form');
-echo form_open("module=inventories&view=edit&id=" . $id, $attrib);
+echo form_open("module=inventories&view=edit_requisition&id=" . $id, $attrib);
 ?>
 <div class="control-group">
     <label class="control-label" for="date"><?php echo $this->lang->line("date"); ?></label>
@@ -451,11 +451,11 @@ echo form_open("module=inventories&view=edit&id=" . $id, $attrib);
         <table id="dyTable" class="table items table-striped table-bordered table-condensed table-hover">
             <thead>
             <th class="span5"><?php echo $this->lang->line("product_name") . " (" . $this->lang->line("product_code") . ")"; ?></th>
-<!--            --><?php
-//            if (TAX1) {
-//                echo '<th class="span2">Current Quantity</th>';
-//            }
-//            ?>
+            <!--            --><?php
+            //            if (TAX1) {
+            //                echo '<th class="span2">Current Quantity</th>';
+            //            }
+            //            ?>
             <th class="span2">Supplaier</th>
             <th class="span2"><?php echo $this->lang->line("quantity"); ?></th>
             <th class="span2"><?php echo $this->lang->line("unit_cost"); ?></th>
@@ -472,8 +472,8 @@ echo form_open("module=inventories&view=edit&id=" . $id, $attrib);
                 echo '<td>'. form_dropdown('supplier_item'.$r, $sp, $prod->supplier_id > 0 ? $prod->supplier_id : "", 'id="supplier_s'.$r.'" data-placeholder="' . $this->lang->line("select") . ' ' . $this->lang->line("supplier") . '" required="required" data-error="' . $this->lang->line("supplier") . ' ' . $this->lang->line("is_required") . '"').'</td>';
 
 
-               echo '<td><input class="input-block-level text-center"  name="quantity' . $r . '" id="quantity' . $r . '" type="text" value="' . $prod->quantity . '" onkeyup="getSubtottal('. $r.')"></td><td><input class="input-block-level text-center" style="text-align:right;" name="unit_cost' . $r . '" id="unit_cost' . $r . '" type="text" value="' . $prod->unit_price . '"></td><td id="sub_'.$r.'">'.$prod->unit_price * $prod->quantity.'</td><td><i class="icon-trash tip del" id="' . $r . '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td></tr>';
-			   $r++;
+                echo '<td><input class="input-block-level text-center"  name="quantity' . $r . '" id="quantity' . $r . '" type="text" value="' . $prod->quantity . '" onkeyup="getSubtottal('. $r.')"></td><td><input class="input-block-level text-center" style="text-align:right;" name="unit_cost' . $r . '" id="unit_cost' . $r . '" type="text" value="' . $prod->unit_price . '"></td><td id="sub_'.$r.'">'.$prod->unit_price * $prod->quantity.'</td><td><i class="icon-trash tip del" id="' . $r . '" title="Remove this Item" style="cursor:pointer;" data-placement="right"></i></td></tr>';
+                $r++;
             }
             ?>
             <input type="hidden" name='id' value='<?php echo $inv->id ?>' />

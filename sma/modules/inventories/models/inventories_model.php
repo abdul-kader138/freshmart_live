@@ -440,6 +440,7 @@ class Inventories_model extends CI_Model
 
     public function getAllInventoryItems($purchase_id)
     {
+
         $this->db->order_by('id', 'asc');
         $q = $this->db->get_where('purchase_items', array('purchase_id' => $purchase_id));
         if ($q->num_rows() > 0) {
@@ -486,6 +487,24 @@ class Inventories_model extends CI_Model
     }
 
 
+    public function getAllRequisitionInventoryItems($purchase_id)
+
+    {
+
+        $this->db->order_by('id', 'asc');
+        $p = $this->db->get_where('purchases', array('id' => $purchase_id), 1);
+        if ($p->num_rows() > 0) {
+            $data = $p->row();
+            $q = $this->db->get_where('purchase_items', array('purchase_id' => $data->purchase_id));
+            if ($q->num_rows() > 0) {
+                foreach (($q->result()) as $row) {
+                    $value[] = $row;
+                }
+                return $value;
+            }
+        }
+    }
+
     public function getInventoryByID($id)
     {
 
@@ -503,7 +522,8 @@ class Inventories_model extends CI_Model
     {
 
         $data = null;
-        $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
+//        $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
+        $p = $this->db->get_where('make_purchases', array('purchase_id' => $id), 1);
         if ($p->num_rows() > 0) {
             $data = $p->row();
             $q = $this->db->get_where('purchases', array('id' => $data->purchase_id));
@@ -515,10 +535,33 @@ class Inventories_model extends CI_Model
     }
 
 
+    public function getRequisitionInventoryByID($id)
+    {
+            $q = $this->db->get_where('purchases', array('id' => $id));
+            if ($q->num_rows() > 0) {
+
+                return $q->row();
+            }
+    }
+
+    public function getPurchasesById($id)
+    {
+
+        $data = null;
+//        $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
+        $p = $this->db->get_where('make_purchases', array('purchase_id' => $id), 1);
+        if ($p->num_rows() > 0) {
+            return $p->row();
+        }
+        return FALSE;
+    }
+
+
     public function getPurchaseId($id)
     {
 
         $data = null;
+//        $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
         $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
         if ($p->num_rows() > 0) {
             return $p->row();
@@ -721,7 +764,6 @@ class Inventories_model extends CI_Model
 
 
         $getInventory = $this->getInventoryByID($id);
-
 
         $templevel = 0;
 

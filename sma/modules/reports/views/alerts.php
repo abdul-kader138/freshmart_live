@@ -31,13 +31,13 @@
 								{
 									"sExtends": "csv",
 									"sFileName": "Products.csv",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6 ]
 								},
 								{
 									"sExtends": "pdf",
 									"sFileName": "<?php echo $this->lang->line("products"); ?>.pdf",
 									"sPdfOrientation": "landscape",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5 ]
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6 ]
 								},
 								"print"
 						]
@@ -46,11 +46,12 @@
 					  "sSearch": "Filter: "
 					},
 					"aoColumns": [ 
-					  null, null, null, null, null, null,
+					  null, null, null, null, null, null,null,
 					  { "bSortable": false }
 					]
 					
                 } ).columnFilter({ aoColumns: [
+						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
@@ -94,12 +95,13 @@
             <th><?php echo $this->lang->line("product_price"); ?></th>
             <th><?php echo $this->lang->line("quantity"); ?></th>
             <th><?php echo $this->lang->line("alert_quantity"); ?></th>
+            <th>Status</th>
             <th style="width:85px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th> 
 		</tr>
         </thead>
 		<tbody>
 			<tr>
-            	<td colspan="7" class="dataTables_empty">Loading data from server</td>
+            	<td colspan="8" class="dataTables_empty">Loading data from server</td>
 			</tr>
         </tbody>
         <tfoot>
@@ -110,7 +112,8 @@
             <th>[<?php echo $this->lang->line("product_price"); ?>]</th>
             <th>[<?php echo $this->lang->line("quantity"); ?>]</th>
             <th>[<?php echo $this->lang->line("alert_quantity"); ?>]</th>
-            <th style="width:85px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th> 
+            <th>Status</th>
+            <th style="width:85px; text-align:center;"><?php echo $this->lang->line("actions"); ?></th>
 		</tr>
         </tfoot>
 	</table>

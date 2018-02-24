@@ -65,15 +65,19 @@ class Reports extends MX_Controller
 
 
         $sp = "( select wp.product_id,sum(wp.quantity) quantity from warehouses_products wp group by product_id) pAlert";
+        $sp = "( select wp.product_id,sum(wp.quantity) quantity from warehouses_products wp group by product_id) pAlert";
 
         $this->load->library('datatables');
 
         $this->datatables
-            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, pAlert.quantity, p.alert_quantity')
+            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, pAlert.quantity, p.alert_quantity, CASE WHEN purchases.checked=0 then purchases.reference_no when purchases.checked=1 then purchases.reference_no  else " " END as status ',false)
             ->from('products p')
             ->join($sp,'pAlert.product_id=p.id','inner')
+            ->join('purchase_items','p.code=purchase_items.product_code','left')
+            ->join('purchases','purchase_items.purchase_id=purchases.id','left')
             ->where('p.alert_quantity >= pAlert.quantity', NULL)
-            ->where('p.track_quantity', 1);
+            ->where('p.track_quantity', 1)
+            ->where('purchases.mr_status', 0);
 
 //        $this->datatables->add_column("Actions",
 //            "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>

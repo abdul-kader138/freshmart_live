@@ -70,7 +70,7 @@ class Inventories extends MX_Controller
     {
 //	   echo 'hello world';
 
-        if ($this->ion_auth->in_group('salesman','viewer')) {
+        if ($this->ion_auth->in_group('salesman', 'viewer')) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');
@@ -129,14 +129,15 @@ class Inventories extends MX_Controller
         }
 
 
-        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner','checker','salesman'));
+        $userHasAuthority = $this->ion_auth->in_group(array('admin', 'owner', 'checker', 'salesman'));
         $this->load->library('datatables');
 
 
         $this->datatables
-            ->select("purchases.id as id, date, reference_no, supplier_name, COALESCE(inv_total, 0), COALESCE(total_tax, 0), total,  CASE WHEN approved = '1' THEN 'Approved' WHEN verify_status = '1' THEN 'Verified'  WHEN checked = '1' THEN 'Checked' END AS approved", FALSE)
+            ->select("purchases.id as id, purchases.date, purchases.reference_no, purchases.supplier_name, COALESCE(purchases.inv_total, 0), COALESCE(purchases.total_tax, 0), purchases.total,  CASE WHEN purchases.checked = 1 THEN 'PO Done' else '' END AS approved", FALSE)
             ->from('purchases')
-            ->where("checked", '0');
+            ->join("make_purchases", 'purchases.id = make_purchases.purchase_id', 'left')
+            ->where('make_purchases.checked IS NULL', NULL);
 //
 //        $this->datatables->add_column("Actions",
 //            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=inventories&view=view_inventory_po&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='" . $this->lang->line("view_inventory") . "' class='tip'><i class='icon-fullscreen'></i></a>&nbsp;<a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
@@ -146,11 +147,11 @@ class Inventories extends MX_Controller
 
         if ($userHasAuthority) {
             $this->datatables->add_column("Actions",
-                "<center><a href='index.php?module=inventories&amp;view=edit&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
+                "<center><a href='index.php?module=inventories&amp;view=edit_requisition&amp;id=$1' title='Process' class='tip'><i class='icon-list'></i></a>
 			 &nbsp;<a href='index.php?module=inventories&amp;view=delete&amp;id=$1' onClick=\"return confirm('" . $this->lang->line('alert_x_inventory') . "')\" title='" . $this->lang->line("delete_inventory") . "' class='tip'><i class='icon-trash'></i></a>&nbsp; </center>", "id")
                 ->unset_column('id');
-        }else{
-            $this->datatables->add_column("Actions","")->unset_column('id');
+        } else {
+            $this->datatables->add_column("Actions", "")->unset_column('id');
         }
 
         echo $this->datatables->generate();
@@ -201,8 +202,8 @@ class Inventories extends MX_Controller
         $this->datatables
             ->select("make_purchases.id as id, mr_date, reference_no, supplier_name, sum(COALESCE(make_mrr.inv_val, 0)), COALESCE(total_tax, 0), sum(COALESCE(make_mrr.inv_val, 0)) as total, case mr_status when '1' Then 'Approved' END approved", FALSE)
             ->from('make_purchases')
-		    ->join("make_mrr", 'make_purchases.id = make_mrr.make_purchase_id', 'left')
-			 ->group_by("make_purchases.id")
+            ->join("make_mrr", 'make_purchases.id = make_mrr.make_purchase_id', 'left')
+            ->group_by("make_purchases.id")
             ->where("make_purchases.mr_status", "1");
         $this->datatables->add_column("Actions",
             // omit mrr approve
@@ -545,7 +546,7 @@ class Inventories extends MX_Controller
     function pdf_purchase()
     {
 
-        if (!$this->ion_auth->in_group(array('admin', 'owner', 'approver','checker'))) {
+        if (!$this->ion_auth->in_group(array('admin', 'owner', 'approver', 'checker'))) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=inventories&view=po_content', 'refresh');
@@ -607,7 +608,7 @@ class Inventories extends MX_Controller
     function pdf_mrr()
     {
 
-        if (!$this->ion_auth->in_group(array('admin', 'owner', 'checker'))) {
+        if (!$this->ion_auth->in_group(array('admin', 'owner', 'checker','salesman'))) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=inventories&view=mrr_list', 'refresh');
@@ -639,7 +640,6 @@ class Inventories extends MX_Controller
 //            redirect('module=inventories', 'refresh');
 //        }
 
-//        var_dump($data['rows']);
         $html = $this->load->view('view_mrr', $data, TRUE);
 
 
@@ -1201,10 +1201,7 @@ class Inventories extends MX_Controller
 
         $checkedBy = $this->inventories_model->checkedByStatus($id);
 
-        if ($this->form_validation->run() == true && $checkedBy->checked == 0 && $this->inventories_model->makePurchaseOrder($id, $invDetails, $items, $warehouse_id)) {
-            $this->session->set_flashdata('success_message', $this->lang->line("purchase_updated"));
-            redirect("module=inventories&view=po_content", 'refresh');
-        } elseif ($this->form_validation->run() == true && $checkedBy->checked == 1 && $this->inventories_model->updatePurchaseOrder($id, $invDetails, $items, $warehouse_id, $checkedBy->purchase_id)) {
+        if ($this->form_validation->run() == true && $checkedBy->checked == 1 && $this->inventories_model->updatePurchaseOrder($id, $invDetails, $items, $warehouse_id, $checkedBy->purchase_id)) {
 
             $this->session->set_flashdata('success_message', $this->lang->line("purchase_updated"));
             redirect("module=inventories&view=po_content", 'refresh');
@@ -1223,14 +1220,10 @@ class Inventories extends MX_Controller
 
 
             $poInfo = $this->inventories_model->getPoInventoryByID($id);
-            if ($poInfo != false) {
-                $data['inv'] = $poInfo;
-                $data['inv_products'] = $this->inventories_model->getAllpoInventoryItems($id);
-            }
-            if ($poInfo == false) {
-                $data['inv'] = $this->inventories_model->getInventoryByID($id);
-                $data['inv_products'] = $this->inventories_model->getAllInventoryItems($id);
-            }
+
+
+            $data['inv'] = $poInfo;
+            $data['inv_products'] = $this->inventories_model->getAllpoInventoryItems($id);
 
 
             $data['id'] = $id;
@@ -1238,6 +1231,161 @@ class Inventories extends MX_Controller
             $data['page_title'] = $this->lang->line("update_purchase");
             $this->load->view('commons/header', $meta);
             $this->load->view('edit', $data);
+            $this->load->view('commons/footer');
+
+        }
+    }
+
+
+    function edit_requisition($id = NULL)
+    {
+
+        // console . log($id);
+        if ($this->input->get('id')) {
+            $id = $this->input->get('id');
+        }
+        $groups = array('viewer');
+        if ($this->ion_auth->in_group($groups)) {
+            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=home', 'refresh');
+        }
+
+        $getPurchaseId = $this->inventories_model->getPurchasesById($id);
+        $All_ready_approved["id"] = null;
+        if ($getPurchaseId->approved === "1") $All_ready_approved["id"] = $getPurchaseId->reference_no;
+        if ($All_ready_approved["id"] != "" && $All_ready_approved["id"] != null) {
+            $ready_approved = implode(',', $All_ready_approved);
+            $this->session->set_flashdata('message', "Following PO already are approved." . $ready_approved);
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=inventories&view=po_content', 'refresh');
+        }
+
+
+//
+//     //   validate form input
+        $this->form_validation->set_message('is_natural_no_zero', $this->lang->line("no_zero_required"));
+        $this->form_validation->set_rules('reference_no', $this->lang->line("ref_no"), 'required|xss_clean');
+        $this->form_validation->set_rules('date', $this->lang->line("date"), 'required|xss_clean');
+        $this->form_validation->set_rules('warehouse', $this->lang->line("warehouse"), 'required|is_natural_no_zero|xss_clean');
+        $this->form_validation->set_rules('supplier', $this->lang->line("supplier"), 'required|is_natural_no_zero|xss_clean');
+        $this->form_validation->set_rules('note', $this->lang->line("note"), 'xss_clean');
+
+        $quantity = "quantity";
+        $product = "product";
+        $unit_cost = "unit_cost";
+        $tax_rate = "tax_rate";
+        $supplier_item = "supplier_item";
+        $item_id = "item_id";
+        if ($this->form_validation->run() == true) {
+            $reference = $this->input->post('reference_no');
+            $date = $this->ion_auth->fsd(trim($this->input->post('date')));
+            $warehouse_id = $this->input->post('warehouse');
+            $supplier_id = $this->input->post('supplier');
+            $supplier_details = $this->inventories_model->getSupplierByID($supplier_id);
+            $supplier_name = $supplier_details->name;
+            $note = $this->ion_auth->clear_tags($this->input->post('note'));
+            $inv_total = 0;
+            $inv_total_no_tax = 0;
+
+            for ($i = 1; $i <= 500; $i++) {
+                if ($this->input->post($quantity . $i) && $this->input->post($product . $i) && $this->input->post($unit_cost . $i)) {
+
+                    if (TAX1) {
+                        $tax_id = $this->input->post($tax_rate . $i);
+                        $tax_details = $this->inventories_model->getTaxRateByID($tax_id);
+                        $taxRate = $tax_details->rate;
+                        $taxType = $tax_details->type;
+                        $tax_rate_id[] = $tax_id;
+
+                        if ($taxType == 1 && $taxRate != 0) {
+                            $item_tax = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)) * $taxRate / 100);
+                            $val_tax[] = $item_tax;
+                        } else {
+                            $item_tax = $taxRate;
+                            $val_tax[] = $item_tax;
+                        }
+
+                        if ($taxType == 1) {
+                            $tax[] = $taxRate . "%";
+                        } else {
+                            $tax[] = $taxRate;
+                        }
+                    } else {
+                        $item_tax = 0;
+                        $tax_rate_id[] = 0;
+                        $val_tax[] = 0;
+                        $tax[] = "";
+                    }
+
+                    $product_details = $this->inventories_model->getProductByCode($this->input->post($product . $i));
+                    $product_id[] = $product_details->id;
+                    $product_name[] = $product_details->name;
+                    $product_code[] = $product_details->code;
+
+                    $inv_quantity[] = $this->input->post($quantity . $i);
+                    $p_item_id[] = $this->input->post($item_id . $i);
+                    //$inv_product_code[] = $this->input->post($product.$i);
+                    $inv_unit_cost[] = $this->input->post($unit_cost . $i);
+                    $inv_supplier_item[] = $this->input->post($supplier_item . $i);
+                    $inv_gross_total[] = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
+                    $inv_total_no_tax += (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
+
+                }
+            }
+
+            if (TAX1) {
+                $total_tax = array_sum($val_tax);
+            } else {
+                $total_tax = 0;
+            }
+
+            $keys = array("product_id", "product_code", "product_name", "tax_rate_id", "tax", "quantity", "unit_price", "gross_total", "val_tax", "supplier_id", "p_item_id");
+
+            $items = array();
+            foreach (array_map(null, $product_id, $product_code, $product_name, $tax_rate_id, $tax, $inv_quantity, $inv_unit_cost, $inv_gross_total, $val_tax, $inv_supplier_item, $p_item_id) as $key => $value) {
+                $items[] = array_combine($keys, $value);
+            }
+
+
+            $inv_total = $inv_total_no_tax + $total_tax;
+
+            $invDetails = array('reference_no' => $reference,
+                'date' => $date,
+                'supplier_id' => $supplier_id,
+                'supplier_name' => $supplier_name,
+                'note' => $note,
+                'inv_total' => $inv_total_no_tax,
+                'total_tax' => $total_tax,
+                'total' => $inv_total
+            );
+
+        }
+
+        $checkedBy = $this->inventories_model->checkedByStatus($id);
+
+        if ($this->form_validation->run() == true && $checkedBy->checked == 0 && $this->inventories_model->makePurchaseOrder($id, $invDetails, $items, $warehouse_id)) {
+            $this->session->set_flashdata('success_message', $this->lang->line("purchase_updated"));
+            redirect("module=inventories&view=po_content", 'refresh');
+        } else {
+
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            $data['success_message'] = $this->session->flashdata('success_message');
+
+            $data['suppliers'] = $this->inventories_model->getAllSuppliers();
+            $data['products'] = $this->inventories_model->getAllProducts();
+
+
+            $data['tax_rates'] = $this->inventories_model->getAllTaxRates();
+            $data['warehouses'] = $this->inventories_model->getAllWarehouses();
+
+            $data['inv'] = $this->inventories_model->getInventoryByID($id);
+            $data['inv_products'] = $this->inventories_model->getAllInventoryItems($id);
+            $data['id'] = $id;
+            $meta['page_title'] = $this->lang->line("update_purchase");
+            $data['page_title'] = $this->lang->line("update_purchase");
+            $this->load->view('commons/header', $meta);
+            $this->load->view('edit_requisition', $data);
             $this->load->view('commons/footer');
 
         }
@@ -1400,7 +1548,7 @@ class Inventories extends MX_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
-        $groups = array('viewer','purchaser','verify','approver');
+        $groups = array('viewer', 'purchaser', 'verify', 'approver');
         if ($this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1412,7 +1560,7 @@ class Inventories extends MX_Controller
         if ($getPurchaseRef->mr_status === '1') $All_ready_approved["id"] = $getPurchaseRef->reference_no;
         if ($All_ready_approved["id"] != "" && $All_ready_approved["id"] != null) {
             $ready_approved = implode(',', $All_ready_approved);
-            $this->session->set_flashdata('message', "MRR already created for following PO (" . $ready_approved.").");
+            $this->session->set_flashdata('message', "MRR already created for following PO (" . $ready_approved . ").");
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect("module=inventories&view=mrr_list", 'refresh');
         }
@@ -1872,7 +2020,7 @@ class Inventories extends MX_Controller
             $code = $item->code;
             $name = $item->name;
             $cost = $item->cost;
-            $product = array('name' => $name,'code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity, "um" => $item->unit);
+            $product = array('name' => $name, 'code' => $code, 'cost' => $cost, 'tax_rate' => $itemDetails->quantity, "um" => $item->unit);
             $product_tax = $item->tax_rate;
         }
 
