@@ -540,12 +540,12 @@ echo form_open("module=inventories&view=make_mrr&id=" . $id, $attrib);
         <table id="dyTable" class="table items table-striped table-bordered table-condensed table-hover">
             <thead>
             <th class="span5"><?php echo $this->lang->line("product_name") . " (" . $this->lang->line("product_code") . ")"; ?></th>
-            <?php
-            if (TAX1) {
-                echo '<th class="span2">' . $this->lang->line("tax_rate") . '</th>';
-            }
-            ?>
-            <th class="span2">Quantity Remain</th>
+<!--            --><?php
+//            if (TAX1) {
+//                echo '<th class="span2">' . $this->lang->line("tax_rate") . '</th>';
+//            }
+//            ?>
+            <th class="span2">PO Quantity</th>
             <th class="span2"><?php echo $this->lang->line("quantity"); ?></th>
             <th class="span2">Expire Date</th>
             <th class="span2"><?php echo $this->lang->line("unit_cost"); ?></th>
@@ -563,18 +563,18 @@ echo form_open("module=inventories&view=make_mrr&id=" . $id, $attrib);
                     $chec = 'checked';
                 }
 
-                echo '<tr id="row_' . $r . '"><td><input name="product' . $r . '" type="hidden" value="' . $prod->product_code . '"><input class="span5 tran" style="text-align:left;" name="item' . $r . '" type="text" value="' . $prod->product_name . ' (' . $prod->product_code . ')"></td>';
-                if (TAX1) {
-                    echo '<td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' . $r . '" id="tax_rate-' . $r . '">';
-                    foreach ($tax_rates as $tax) {
-                        echo "<option value=" . $tax->id;
-                        if ($tax->id == $prod->tax_rate_id) {
-                            echo ' selected="selected"';
-                        }
-                        echo ">" . $tax->name . "</option>";
-                    }
-                    echo '</select></td>';
-                }
+                echo '<tr id="row_' . $r . '"><td><input name="product' . $r . '" type="hidden" value="' . $prod->product_code . '"><input class="span5 tran" readonly="readonly" style="text-align:left;" name="item' . $r . '" type="text" value="' . $prod->product_name . ' (' . $prod->product_code . ')"></td>';
+//                if (TAX1) {
+//                    echo '<td><select class="input-block-level" data-placeholder="Select..." name="tax_rate' . $r . '" id="tax_rate-' . $r . '">';
+//                    foreach ($tax_rates as $tax) {
+//                        echo "<option value=" . $tax->id;
+//                        if ($tax->id == $prod->tax_rate_id) {
+//                            echo ' selected="selected"';
+//                        }
+//                        echo ">" . $tax->name . "</option>";
+//                    }
+//                    echo '</select></td>';
+//                }
                 echo '<td><input class="input-block-level text-center" readonly="readonly" name="rquantity' . $r . '" id="rquantity' . $r . '" type="text" value="' . $prod->quantity . '"></td>
                     <td><input class="input-block-level text-center" name="quantity' . $r . '" id="quantity' . $r . '" type="text" value=""></td>
                     <td><input class="input-block-level text-center datepicker" style="text-align:right;" name="exp_date' . $r . '" type="text" value="' . $prod->exp_date . '"></td>

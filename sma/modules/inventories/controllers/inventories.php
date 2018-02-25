@@ -917,6 +917,7 @@ class Inventories extends MX_Controller
                     $inv_gross_total[] = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
                     $inv_total_no_tax += (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
 
+
                 }
             }
 
@@ -1168,6 +1169,8 @@ class Inventories extends MX_Controller
                     $inv_gross_total[] = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
                     $inv_total_no_tax += (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
 
+
+
                 }
             }
 
@@ -1330,7 +1333,6 @@ class Inventories extends MX_Controller
                     $inv_supplier_item[] = $this->input->post($supplier_item . $i);
                     $inv_gross_total[] = (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
                     $inv_total_no_tax += (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i)));
-
                 }
             }
 
@@ -1633,6 +1635,12 @@ class Inventories extends MX_Controller
                     $inv_quantity[] = $this->input->post($quantity . $i);
                     $product_remain_qty = ($this->input->post($rquantity . $i) - $this->input->post($quantity . $i));
                     $inv_unit_cost[] = $this->input->post($unit_cost . $i);
+
+                    if($product_details->price < $this->input->post($unit_cost . $i)){
+                        $this->session->set_flashdata('message', $this->lang->line("prd_price_less_then_cost") . " (" . $product_details->name . ")");
+                        redirect("module=inventories&view=po_content", 'refresh');
+                    }
+
                     if (TAX1) {
                         $tax_id = $this->input->post($tax_rate . $i);
                         $tax_details = $this->inventories_model->getTaxRateByID($tax_id);

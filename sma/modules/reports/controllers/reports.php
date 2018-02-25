@@ -65,12 +65,12 @@ class Reports extends MX_Controller
 
 
 //        $sp = "( select wp.product_id,sum(wp.quantity) quantity from warehouses_products wp group by product_id) pAlert";
-        $sp = "( SELECT purchase_items.product_code,purchases.reference_no,purchases.checked from purchase_items inner join purchases on purchases.id=purchase_items.purchase_id left join make_purchases on make_purchases.purchase_id=purchases.id where purchases.checked=0) pAlert";
+        $sp = "( SELECT purchase_items.product_code,purchases.checked,purchases.reference_no, make_purchases.reference_no as ref,make_purchases.mr_status from purchase_items inner join purchases on purchases.id=purchase_items.purchase_id left join make_purchases on make_purchases.purchase_id=purchases.id where purchases.checked in (0,1) and make_purchases.mr_status=0) pAlert";
 
         $this->load->library('datatables');
 
         $this->datatables
-            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, p.quantity, p.alert_quantity, CASE WHEN pAlert.checked=0 then pAlert.reference_no  else " " END as status ',false)
+            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, p.quantity, p.alert_quantity, CASE WHEN pAlert.checked=0 then pAlert.reference_no  WHEN pAlert.checked=1 then pAlert.ref else  " " END as status ',false)
 //            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, p.quantity, p.alert_quantity, " " as status ',false)
             ->from('products p')
             ->join($sp,'p.code=pAlert.product_code','left')

@@ -145,6 +145,11 @@ class Pos extends MX_Controller
                         }
                     }
 
+                    if($product_details->cost > $product_details->price){
+                        $this->session->set_flashdata('message', $this->lang->line("prd_price_less_then_cost") . " (" . $product_details->name . ")");
+                        redirect("module=pos", 'refresh');
+                    }
+
                     if (TAX1) {
                         $tax_id = $this->input->post($tax_rate . $i);
                         $tax_details = $this->pos_model->getTaxRateByID($tax_id);

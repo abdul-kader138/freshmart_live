@@ -522,8 +522,8 @@ class Inventories_model extends CI_Model
     {
 
         $data = null;
+        $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
 //        $p = $this->db->get_where('make_purchases', array('id' => $id), 1);
-        $p = $this->db->get_where('make_purchases', array('purchase_id' => $id), 1);
         if ($p->num_rows() > 0) {
             $data = $p->row();
             $q = $this->db->get_where('purchases', array('id' => $data->purchase_id));

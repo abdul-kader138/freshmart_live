@@ -706,6 +706,7 @@ $lang['profit']						= "Profit";
 $lang['pr_cost_tip']					= "Purchase price without tax";
 $lang['pr_price_tip']					= "Selling Price without tax";
 $lang['wh_qty_less_then_sale']                          = "Warehouse quantity is less than the order quantity";
+$lang['prd_price_less_then_cost']                          = "Product buying price should not greater than  sale price";
 $lang['upcoming_events']				= "Upcoming Events";
 $lang['edit_ann']                                       = "Edit Annoucement";
 $lang['restrict_sale']					= "Restrict Sales";
