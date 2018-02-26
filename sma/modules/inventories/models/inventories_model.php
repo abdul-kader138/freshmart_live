@@ -495,7 +495,7 @@ class Inventories_model extends CI_Model
         $p = $this->db->get_where('purchases', array('id' => $purchase_id), 1);
         if ($p->num_rows() > 0) {
             $data = $p->row();
-            $q = $this->db->get_where('purchase_items', array('purchase_id' => $data->purchase_id));
+            $q = $this->db->get_where('purchase_items', array('purchase_id' => $data->id));
             if ($q->num_rows() > 0) {
                 foreach (($q->result()) as $row) {
                     $value[] = $row;
