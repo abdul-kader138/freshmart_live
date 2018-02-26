@@ -67,8 +67,8 @@ class Reports_model extends CI_Model
 			return $data;
 		}
 	}
-	
-	public function getStockValue() 
+
+	public function getStockValue()
 	{
 		$q = $this->db->query("SELECT SUM(by_price) as stock_by_price, SUM(by_cost) as stock_by_cost FROM ( Select COALESCE(sum(warehouses_products.quantity), 0)*price as by_price, COALESCE(sum(warehouses_products.quantity), 0)*cost as by_cost FROM products JOIN warehouses_products ON warehouses_products.product_id=products.id GROUP BY products.id )a");
 		 if( $q->num_rows() > 0 )

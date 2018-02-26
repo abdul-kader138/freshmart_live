@@ -160,7 +160,18 @@ class Reports extends MX_Controller
         $this->load->view('commons/footer');
     }
 
+    function sales_margin()
+    {
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
+        $data['categories'] = $this->reports_model->getAllCategories();
 
+        $meta['page_title'] = $this->lang->line("sale_margin_report");
+        $data['page_title'] = $this->lang->line("sale_margin_report");
+        $this->load->view('commons/header', $meta);
+        $this->load->view('sales_margin', $data);
+        $this->load->view('commons/footer');
+    }
 
 
     function getSales()
@@ -336,6 +347,74 @@ class Reports extends MX_Controller
 
         echo $this->datatables->generate();
     }
+
+
+    function getSalesMarginByCategory()
+    {
+
+        if ($this->input->get('warehouse')) {
+            $warehouse = $this->input->get('warehouse');
+        } else {
+            $warehouse = NULL;
+        }
+
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+        if ($this->input->get('category')) {
+            $category = $this->input->get('category');
+        } else {
+            $category = NULL;
+        }
+        if ($start_date) {
+            $start_date = $this->ion_auth->fsd($start_date);
+            $end_date = $this->ion_auth->fsd($end_date);
+        }
+
+
+
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("sale_items.product_id as pid,categories.name,sale_items.product_code,sale_items.product_name,sale_items.product_unit,sum(sale_items.quantity) as qty,sale_items.unit_price,products.cost,sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) as val, sum((COALESCE( products.cost, 0))*(COALESCE( sale_items.quantity, 0))) as val1, (COALESCE(sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) -sum((COALESCE(products.cost, 0))*(COALESCE( sale_items.quantity, 0))),0)) as differ", FALSE)
+            ->from('sales')
+            ->join('sale_items', 'sales.id=sale_items.sale_id', 'left')
+            ->join('products', 'sale_items.product_code=products.code', 'left')
+            ->join('categories', 'products.category_id=categories.id', 'left')
+            ->group_by('sale_items.product_id');
+
+
+
+
+        if ($warehouse) {
+            $this->datatables->like('sales.warehouse_id', $warehouse);
+        }
+        if ($start_date) {
+            $this->datatables->where('sales.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+        }
+        if ($category) {
+            $this->datatables->like('products.category_id', $category);
+        }
+        /*$this->datatables->add_column("Actions",
+            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='".$this->lang->line("view_invoice")."' class='tip'><i class='icon-fullscreen'></i></a>
+            <a href='index.php?module=sales&view=pdf&id=$1' title='".$this->lang->line("download_pdf")."' class='tip'><i class='icon-file'></i></a>
+            <a href='index.php?module=sales&view=email_invoice&id=$1' title='".$this->lang->line("email_invoice")."' class='tip'><i class='icon-envelope'></i></a>
+            <a href='index.php?module=sales&amp;view=edit&amp;id=$1' title='".$this->lang->line("edit_invoice")."' class='tip'><i class='icon-edit'></i></a>
+            <a href='index.php?module=sales&amp;view=delete&amp;id=$1' onClick=\"return confirm('". $this->lang->line('alert_x_invoice') ."')\" title='".$this->lang->line("delete_invoice")."' class='tip'><i class='icon-trash'></i></a></center>", "sid");*/
+
+        $this->datatables->unset_column('pid');
+
+
+//        echo $end_date;
+        echo $this->datatables->generate();
+    }
+
 
 
     function purchases()
