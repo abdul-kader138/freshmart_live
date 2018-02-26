@@ -180,8 +180,8 @@ if($this->input->post('submit')) {
             <th>Category</th>
             <th>Code</th>
             <th>Name</th>
-            <th><?php echo $this->lang->line("product_qty"); ?></th>
-            <th>UM</th>
+            <th>Sale Qty</th>
+            <th width="5px">UM</th>
             <th>Price</th>
             <th>Cost</th>
             <th>Sales Value</th>
@@ -191,7 +191,7 @@ if($this->input->post('submit')) {
         </thead>
         <tbody>
         <tr>
-            <td colspan="5" class="dataTables_empty">Loading data from server</td>
+            <td colspan="10" class="dataTables_empty">Loading data from server</td>
         </tr>
 
         </tbody>
