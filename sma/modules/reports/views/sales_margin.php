@@ -97,7 +97,7 @@ if($this->input->post('submit')) {
                 ]
             },
             "aoColumns": [
-                null,  null, null, null,null,null,null,null,null,null
+                null,  null, null, null,null,null,null,null,null,null,null
             ],
 
             "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
@@ -105,6 +105,7 @@ if($this->input->post('submit')) {
 
         } ).columnFilter({ aoColumns: [
 
+            { type: "text", bRegex:true },
             { type: "text", bRegex:true },
             { type: "text", bRegex:true },
             { type: "text", bRegex:true },
@@ -186,12 +187,13 @@ if($this->input->post('submit')) {
             <th>Cost</th>
             <th>Sales Value</th>
             <th>Buying Value</th>
-            <th>Margin</th>
+            <th>Margin(Price)</th>
+            <th>Margin(Value)</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td colspan="10" class="dataTables_empty">Loading data from server</td>
+            <td colspan="11" class="dataTables_empty">Loading data from server</td>
         </tr>
 
         </tbody>

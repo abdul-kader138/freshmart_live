@@ -382,7 +382,7 @@ class Reports extends MX_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("sale_items.product_id as pid,categories.name,sale_items.product_code,sale_items.product_name,sum(sale_items.quantity) as qty,sale_items.product_unit,sale_items.unit_price,products.cost,sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) as val, sum((COALESCE( products.cost, 0))*(COALESCE( sale_items.quantity, 0))) as val1, (COALESCE(sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) -sum((COALESCE(products.cost, 0))*(COALESCE( sale_items.quantity, 0))),0)) as differ", FALSE)
+            ->select("sale_items.product_id as pid,categories.name,sale_items.product_code,sale_items.product_name,sum(sale_items.quantity) as qty,sale_items.product_unit,sale_items.unit_price,products.cost,sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) as val, sum((COALESCE( products.cost, 0))*(COALESCE( sale_items.quantity, 0))) as val1, ((COALESCE( sale_items.unit_price, 0)) - (COALESCE( products.cost, 0))) as rate_margin,(COALESCE(sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) -sum((COALESCE(products.cost, 0))*(COALESCE( sale_items.quantity, 0))),0)) as differ", FALSE)
             ->from('sales')
             ->join('sale_items', 'sales.id=sale_items.sale_id', 'left')
             ->join('products', 'sale_items.product_code=products.code', 'left')

@@ -1074,7 +1074,8 @@ class Products extends MX_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('code', 'name', 'cost', 'price','alert_quantity','quantity');
+//                $keys = array('code', 'name', 'cost', 'price','alert_quantity','quantity');
+                $keys = array('code', 'alert_quantity');
 
                 $final = array();
 
