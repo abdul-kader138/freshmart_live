@@ -279,6 +279,7 @@ $lang['reference_no'] 					= "Reference No";
 $lang['mrr_reference_no'] 				= "MRR Reference No";
 $lang['po_selection'] 			    	= "Select required PO";
 $lang['po_reference_no'] 				= "PO Reference No";
+$lang['pr_reference_no'] 				= "PR Reference No";
 $lang['edit_order'] 				    = "Edit Order";
 $lang['sale_added'] 					= "Sale Order Successfully Added";
 $lang['add_sale']						= "Add New Sale";

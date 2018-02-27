@@ -2044,7 +2044,8 @@ class Inventories extends MX_Controller
             $id = $this->input->get('id');
         }
 
-        if (!$this->ion_auth->in_group('owner')) {
+        $groups = array('owner','salesman');
+        if (!$this->ion_auth->in_group($groups)) {
             $this->session->set_flashdata('message', $this->lang->line("access_denied"));
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
             redirect('module=home', 'refresh');

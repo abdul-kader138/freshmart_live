@@ -25,7 +25,7 @@
         <div class="span6">
 
              <h3 class="inv">Purchase Requisition Details</h3>
-            <p style="font-weight:bold;"><?php echo $this->lang->line("po_reference_no"); ?>: <?php echo $inv->reference_no; ?></p>
+            <p style="font-weight:bold;"><?php echo $this->lang->line("pr_reference_no"); ?>: <?php echo $inv->reference_no; ?></p>
 
             <p style="font-weight:bold;"><?php echo "Print Date"; ?>: <?php echo date('d/m/y'); ?></p>
         </div>
