@@ -173,6 +173,18 @@ class Reports extends MX_Controller
         $this->load->view('commons/footer');
     }
 
+    function product_margin()
+    {
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
+        $data['categories'] = $this->reports_model->getAllCategories();
+
+        $meta['page_title'] = $this->lang->line("product_margin_report");
+        $data['page_title'] = $this->lang->line("product_margin_report");
+        $this->load->view('commons/header', $meta);
+        $this->load->view('product_margin', $data);
+        $this->load->view('commons/footer');
+    }
 
     function getSales()
     {
@@ -347,6 +359,39 @@ class Reports extends MX_Controller
 
         echo $this->datatables->generate();
     }
+
+
+
+    function geProductMarginByCategory()
+    {
+
+        if ($this->input->get('warehouse')) {
+            $warehouse = $this->input->get('warehouse');
+        } else {
+            $warehouse = NULL;
+        }
+
+
+        if ($this->input->get('category')) {
+            $category = $this->input->get('category');
+        } else {
+            $category = NULL;
+        }
+
+
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("products.id as pid,categories.name as c_name,products.code,products.name,sum(products.quantity) as qty,products.unit,products.price,products.cost,((COALESCE( products.price, 0)) - (COALESCE( products.cost, 0))) as rate_margin", FALSE)
+            ->from('products')
+            ->join('categories', 'products.category_id=categories.id', 'left')
+            ->group_by('products.id');
+        if ($category) {
+            $this->datatables->like('products.category_id', $category);
+        }
+        $this->datatables->unset_column('pid');
+        echo $this->datatables->generate();
+    }
+
 
 
     function getSalesMarginByCategory()

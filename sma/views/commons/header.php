@@ -415,6 +415,10 @@
             <li>
                 <a href="<?php echo base_url(); ?>index.php?module=reports&view=products"><?php echo $this->lang->line('product_alerts'); ?></a>
             </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=product_margin">Product Margin Report</a>
+            </li>
 
             <li>
                 <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
@@ -493,7 +497,10 @@
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
                     </li>
 
-
+                    <li class="divider"></li>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=product_margin">Product Margin Report</a>
+                    </li>
                 <?php } ?>
 
                 <?php if ($this->ion_auth->in_group('salesman')) { ?>
@@ -544,6 +551,12 @@
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=purchases"><?php echo $this->lang->line('purchase_report'); ?></a>
                     </li>
+
+                    <li class="divider"></li>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=product_margin">Product Margin Report</a>
+                    </li>
+
                 <?php } ?>
             </ul>
         </li>
