@@ -1733,7 +1733,7 @@ class Inventories extends MX_Controller
                             "received_qty" => $this->input->post($quantity . $i),
                             "price" => $this->input->post($unit_cost . $i),
                             "tax_val" => $item_tax,
-                            "tax_id" => $tax_id,
+                            "tax_id" => null,
                             "inv_val" => (($this->input->post($quantity . $i)) * ($this->input->post($unit_cost . $i))),
                             "mrr_date" => date('Y-m-d H:i:s'),
                             "mrr_ref" => $mr_reference_no,

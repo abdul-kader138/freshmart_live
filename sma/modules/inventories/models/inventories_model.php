@@ -1015,22 +1015,21 @@ class Inventories_model extends CI_Model
         );
 
 
-//        $ifMrrNotExists = $this->getMakeMrrInfoByPurchasedId($obj['purchase_id']);
-//        if (!$ifMrrNotExists) {
-//            $this->db->where('id', $id);
-//            if ($this->db->update('make_purchases', $purchseData)) {
-//
-//                foreach ($obj as $data) {
-//                    $this->npQTY($data['purchase_item_id'], $data['received_qty']);
-//                    $this->updateProductQuantity($data['purchase_item_id'], $data['received_qty'], $warehouse_id, $data['price']);
-//                }
+        $ifMrrNotExists = $this->getMakeMrrInfoByPurchasedId($obj['purchase_id']);
+        if (!$ifMrrNotExists) {
+            $this->db->where('id', $id);
+            if ($this->db->update('make_purchases', $purchseData)) {
+                foreach ($obj as $data) {
+                    $this->npQTY($data['purchase_item_id'], $data['received_qty']);
+                    $this->updateProductQuantity($data['purchase_item_id'], $data['received_qty'], $warehouse_id, $data['price']);
+                }
                 $this->db->insert_batch('make_mrr', $obj);
-//                return true;
-//            } else {
-//                return false;
-//            }
-//            return false;
-//        }
+                return true;
+            } else {
+                return false;
+            }
+            return false;
+        }
     }
 
     public function updateCheck($purchase_id)
