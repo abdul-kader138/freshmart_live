@@ -303,6 +303,7 @@ $lang['purchase_reports'] 				= "Purchase Reports";
 $lang['sale_reports'] 					= "Sale Reports";
 $lang['sale_report_customer'] 			= "Sale Report (Customer Wise)";
 $lang['sale_margin_report'] 			= "Sale Margin Report";
+$lang['non_movement_product'] 			= "Non-movement Product Report";
 $lang['product_margin_report'] 			= "Product Margin Report";
 $lang['all_products'] 					= "All Products";
 $lang['product_alerts'] 				= "Product Alerts";

@@ -70,11 +70,11 @@ class Reports extends MX_Controller
         $this->load->library('datatables');
 
         $this->datatables
-            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, p.quantity, p.alert_quantity, CASE WHEN pAlert.checked=0 then pAlert.reference_no  WHEN pAlert.checked=1 then pAlert.ref else  " " END as status ',false)
+            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, p.quantity, p.alert_quantity, CASE WHEN pAlert.checked=0 then pAlert.reference_no  WHEN pAlert.checked=1 then pAlert.ref else  " " END as status ', false)
 //            ->select('p.id as product_id, p.image as image, p.code as code, p.name as name, p.unit, p.price, p.quantity, p.alert_quantity, " " as status ',false)
             ->from('products p')
-            ->join($sp,'p.code=pAlert.product_code','left')
-            ->where('p.quantity <=  p.alert_quantity',  NULL,false)
+            ->join($sp, 'p.code=pAlert.product_code', 'left')
+            ->where('p.quantity <=  p.alert_quantity', NULL, false)
             ->where('p.track_quantity', 1);
 
 //        $this->datatables->add_column("Actions",
@@ -144,8 +144,8 @@ class Reports extends MX_Controller
         $this->load->view('sales', $data);
         $this->load->view('commons/footer');
     }
-	
-	function customer_sales()
+
+    function customer_sales()
     {
         $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
         $data['users'] = $this->reports_model->getAllUsers();
@@ -183,6 +183,19 @@ class Reports extends MX_Controller
         $data['page_title'] = $this->lang->line("product_margin_report");
         $this->load->view('commons/header', $meta);
         $this->load->view('product_margin', $data);
+        $this->load->view('commons/footer');
+    }
+
+    function non_movement_product()
+    {
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
+        $data['categories'] = $this->reports_model->getAllCategories();
+
+        $meta['page_title'] = $this->lang->line("non_movement_product");
+        $data['page_title'] = $this->lang->line("non_movement_product");
+        $this->load->view('commons/header', $meta);
+        $this->load->view('non_movement_product', $data);
         $this->load->view('commons/footer');
     }
 
@@ -233,9 +246,8 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
         }
-		
-		
-		
+
+
         $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
 
         $this->load->library('datatables');
@@ -248,7 +260,6 @@ class Reports extends MX_Controller
             ->group_by('sales.id,sales.reference_no');
 
 
-       
         if ($user) {
             $this->datatables->like('sales.user', $user);
         }
@@ -284,11 +295,9 @@ class Reports extends MX_Controller
 
         echo $this->datatables->generate();
     }
-	
-	
-	
-	
-	function getSalesByCustomer()
+
+
+    function getSalesByCustomer()
     {
         if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
@@ -334,8 +343,7 @@ class Reports extends MX_Controller
             ->from('sales')
             ->join('sale_items', 'sales.id=sale_items.sale_id', 'left')
             ->join($sr, 'sale_items.sale_id=sReturn.sale_id and  sale_items.product_id=sReturn.product_id', 'left')
-            ->group_by('sale_items.product_id','sale_items.sale_id');
-
+            ->group_by('sale_items.product_id', 'sale_items.sale_id');
 
 
         if ($customer) {
@@ -360,6 +368,45 @@ class Reports extends MX_Controller
         echo $this->datatables->generate();
     }
 
+
+    function getNonMovementProductByCategory()
+    {
+
+        if ($this->input->get('warehouse')) {
+            $warehouse = $this->input->get('warehouse');
+        } else {
+            $warehouse = NULL;
+        }
+
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+        if ($this->input->get('category')) {
+            $category = $this->input->get('category');
+        } else {
+            $category = NULL;
+        }
+        if ($start_date) {
+            $start_date = $this->ion_auth->fsd($start_date);
+            $end_date = $this->ion_auth->fsd($end_date);
+        }
+        $getData = "(select categories.name as c_name, t.code, t.name,t.qty, t.unit, t.price,t.cost,t.rate_margin from  (select
+             products.category_id,products.code,products.name,products.quantity as qty,products.unit,products.price,products.cost,((COALESCE( products.price, 0)) - (COALESCE( products.cost, 0))) as rate_margin
+             from products  where code NOT IN(select sale_items.product_code from sales INNER join sale_items on sales.id=sale_items.sale_id where sales.date BETWEEN '{$start_date}' and '{$end_date}' and sales.warehouse_id=2 GROUP BY sale_items.product_id)) as t INNER join categories on t.category_id=categories.id) PCosts";
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("PCosts.c_name,PCosts.code,PCosts.name,PCosts.qty,PCosts.unit,PCosts.price,PCosts.cost,PCosts.rate_margin", FALSE)
+        ->from('products')
+        ->join($getData, 'products.code=PCosts.code', 'right');
+        echo $this->datatables->generate();
+    }
 
 
     function geProductMarginByCategory()
@@ -393,7 +440,6 @@ class Reports extends MX_Controller
     }
 
 
-
     function getSalesMarginByCategory()
     {
 
@@ -424,7 +470,6 @@ class Reports extends MX_Controller
         }
 
 
-
         $this->load->library('datatables');
         $this->datatables
             ->select("sale_items.product_id as pid,categories.name,sale_items.product_code,sale_items.product_name,sum(sale_items.quantity) as qty,sale_items.product_unit,sale_items.unit_price,products.cost,sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) as val, sum((COALESCE( products.cost, 0))*(COALESCE( sale_items.quantity, 0))) as val1, ((COALESCE( sale_items.unit_price, 0)) - (COALESCE( products.cost, 0))) as rate_margin,(COALESCE(sum((COALESCE( sale_items.unit_price, 0))*(COALESCE( sale_items.quantity, 0))) -sum((COALESCE(products.cost, 0))*(COALESCE( sale_items.quantity, 0))),0)) as differ", FALSE)
@@ -433,8 +478,6 @@ class Reports extends MX_Controller
             ->join('products', 'sale_items.product_code=products.code', 'left')
             ->join('categories', 'products.category_id=categories.id', 'left')
             ->group_by('sale_items.product_id');
-
-
 
 
         if ($warehouse) {
@@ -459,7 +502,6 @@ class Reports extends MX_Controller
 //        echo $end_date;
         echo $this->datatables->generate();
     }
-
 
 
     function purchases()
@@ -515,8 +557,6 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
         }
-
-
 
 
         $pp = "(SELECT mm.purchase_id,mm.make_purchase_id, mm.mrr_date,mm.id, mm.received_qty purchasedQty, mm.inv_val  purchasedVal from purchase_items p JOIN make_mrr mm on mm.purchase_id=p.purchase_id and mm.make_purchase_id=p.make_purchase_id where mm.mrr_date between
@@ -621,12 +661,9 @@ class Reports extends MX_Controller
         $num = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
         if (!empty($sales)) {
-          foreach ($sales as $sale) {
-        $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . $this->lang->line("discount") . "</td><td>" . $this->ion_auth->formatMoney($sale->discount) . "</td></tr><tr><td>" . $this->lang->line("return") . "</td><td>" . $this->ion_auth->formatMoney($sale->return_quantity) . "</td></tr><tr><td>" . $this->lang->line("tax1") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax1) . "</td></tr><tr><td>" . $this->lang->line("tax2") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax2) . "</td></tr><tr><td>" . $this->lang->line("total") . "</td><td>" . $this->ion_auth->formatMoney($sale->total) . "</td></tr></table>";
-        }
-
-
-
+            foreach ($sales as $sale) {
+                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . $this->lang->line("discount") . "</td><td>" . $this->ion_auth->formatMoney($sale->discount) . "</td></tr><tr><td>" . $this->lang->line("return") . "</td><td>" . $this->ion_auth->formatMoney($sale->return_quantity) . "</td></tr><tr><td>" . $this->lang->line("tax1") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax1) . "</td></tr><tr><td>" . $this->lang->line("tax2") . "</td><td>" . $this->ion_auth->formatMoney($sale->tax2) . "</td></tr><tr><td>" . $this->lang->line("total") . "</td><td>" . $this->ion_auth->formatMoney($sale->total) . "</td></tr></table>";
+            }
 
 
             /*for ($i = 1; $i <= $num; $i++){
@@ -914,7 +951,7 @@ class Reports extends MX_Controller
             ->join($wh_qty, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
             ->join($pp, 'p.id = PCosts.purchase_item_id', 'left')
-			->where('p.quantity > 0',null);
+            ->where('p.quantity > 0', null);
 
         if ($product) {
             $this->datatables->where('p.id', $product);
@@ -985,7 +1022,6 @@ class Reports extends MX_Controller
         }
 
 
-       
         $this->load->library('datatables');
         $this->datatables
             ->select("p.code, p.name,pd.code as c ,pd.created_at as count_date, p.unit, pd.count_quantity as cun_quantity, COALESCE( pd.actual_quantity, 0 ) as quantity,

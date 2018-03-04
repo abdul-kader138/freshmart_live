@@ -37,7 +37,7 @@
 // The following values will probably need to be changed.
 $db['default']['username'] = "root";
 $db['default']['password'] = "";
-$db['default']['database'] = "fresh_mart_01";
+$db['default']['database'] = "fresh_mart_02";
 //$db['default']['database'] = "softmart_fresh";
 
 // The following values can probably stay the same.

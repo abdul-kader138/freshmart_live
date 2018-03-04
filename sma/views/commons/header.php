@@ -440,6 +440,11 @@
             <li>
                 <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales_margin">Sales Margin Report</a>
             </li>
+
+            <li class="divider"></li>
+            <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=non_movement_product">Non-Movement Product Report</a>
+            </li>
         </ul>
     </li>
     </ul>
@@ -555,6 +560,11 @@
                     <li class="divider"></li>
                     <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=product_margin">Product Margin Report</a>
+                    </li>
+
+                    <li class="divider"></li>
+                    <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=non_movement_product">Non-Movement Product Report</a>
                     </li>
 
                 <?php } ?>
