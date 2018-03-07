@@ -12,7 +12,7 @@
                     <?php if(BSTATESAVE) { echo '"bStateSave": true,'; } ?>
 			'bProcessing'    : true,
 			'bServerSide'    : true,
-			<?php $no_cost = array('salesman');
+			<?php $no_cost = array('');
                             if (!$this->ion_auth->in_group($no_cost)) { 
 			?>
                     'sAjaxSource'    : '<?php echo base_url(); ?>index.php?module=products&view=getdatatableajaxcost',
@@ -37,14 +37,14 @@
 								{
 									"sExtends": "csv",
 									"sFileName": "<?php echo $this->lang->line("products"); ?>.csv",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8,9<?php $no_cost = array('salesman', 'viewer');
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8,9<?php $no_cost = array('viewer');
 							if (!$this->ion_auth->in_group($no_cost)) { echo ', 6'; } ?> ]
 								},
 								{
 									"sExtends": "pdf",
 									"sFileName": "<?php echo $this->lang->line("products"); ?>.pdf",
 									"sPdfOrientation": "landscape",
-                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8,9<?php $no_cost = array('salesman', 'viewer');
+                   		 			"mColumns": [ 0, 1, 2, 3, 4, 5,6,7,8,9<?php $no_cost = array( 'viewer');
 							if (!$this->ion_auth->in_group($no_cost)) { echo ', 6'; } ?> ]
 								},
 								"print"
@@ -52,7 +52,7 @@
 					},
 					"aoColumns": [ 
 					  null, null, null, null, null, null, null,
-					  <?php $no_cost = array('salesman');
+					  <?php $no_cost = array('');
 					  		if (!$this->ion_auth->in_group($no_cost)) { 
 					  
 					  echo "null,";
@@ -69,7 +69,7 @@
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
 						{ type: "text", bRegex:true },
-						<?php $no_cost = array('salesman');
+						<?php $no_cost = array('');
 							if (!$this->ion_auth->in_group($no_cost)) { 
 								echo '{ type: "text", bRegex:true },';
 							}
@@ -125,7 +125,7 @@
 			<th><?php echo $this->lang->line("product_code"); ?></th>
             <th><?php echo $this->lang->line("product_name"); ?></th>
             <th><?php echo $this->lang->line("category"); ?></th>
-            <?php $no_cost = array('salesman');
+            <?php $no_cost = array('');
 				  if (!$this->ion_auth->in_group($no_cost)) { 
             echo "<th>".$this->lang->line("product_cost")."</th>";
             } ?>
@@ -150,7 +150,7 @@
 			<th>[<?php echo $this->lang->line("product_code"); ?>]</th>
             <th>[<?php echo $this->lang->line("product_name"); ?>]</th>
             <th>[<?php echo $this->lang->line("category"); ?>]</th>
-            <?php $no_cost = array('salesman');
+            <?php $no_cost = array('');
 				  if (!$this->ion_auth->in_group($no_cost)) { 
             echo "<th>[".$this->lang->line("product_cost")."]</th>";
             } ?>

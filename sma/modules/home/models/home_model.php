@@ -129,7 +129,7 @@ class Home_model extends CI_Model
 
         $q=$this->db->query("SELECT sale_items.product_code as code, sale_items.product_name as name, sum(sale_items.quantity*sale_items.unit_price) as val
 						FROM sales inner join sale_items on sales.id=sale_items.sale_id
-                        WHERE sales.date >= date_sub( now( ) , INTERVAL 1 MONTH )
+                        WHERE sales.date between '".$this->firstDay()."' and '".date('Y-m-d')."'
 						GROUP BY sale_items.product_id order by val DESC LIMIT 10");
 
 //	$m = date('Y-m');
@@ -172,7 +172,7 @@ class Home_model extends CI_Model
     {
 
 
-        $q=$this->db->query("SELECT categories.name as code, sum(sale_items.quantity*sale_items.unit_price) as val FROM sales inner join sale_items on sales.id=sale_items.sale_id inner join products on sale_items.product_code=products.code INNER join categories on products.category_id=categories.id WHERE sales.date >= date_sub( now( ) , INTERVAL 1 MONTH ) GROUP BY products.category_id order by val DESC LIMIT 10");
+        $q=$this->db->query("SELECT categories.name as code, sum(sale_items.quantity*sale_items.unit_price) as val FROM sales inner join sale_items on sales.id=sale_items.sale_id inner join products on sale_items.product_code=products.code INNER join categories on products.category_id=categories.id WHERE sales.date between '".$this->firstDay()."' and '".date('Y-m-d')."' GROUP BY products.category_id order by val DESC LIMIT 10");
 
 
         if($q->num_rows() > 0) {
@@ -192,7 +192,7 @@ class Home_model extends CI_Model
 
         $q=$this->db->query("SELECT categories.name as code, (sum(sale_items.quantity*sale_items.unit_price)- sum(sale_items.quantity*products.cost) ) as val
 						FROM sales inner join sale_items on sales.id=sale_items.sale_id inner join products on sale_items.product_code=products.code INNER join categories on products.category_id=categories.id
-                        WHERE sales.date >= date_sub( now( ) , INTERVAL 1 MONTH )
+                        WHERE sales.date between '".$this->firstDay()."' and '".date('Y-m-d')."'
 						GROUP BY products.category_id order by val DESC LIMIT 10");
 
 
@@ -239,6 +239,19 @@ class Home_model extends CI_Model
         }
     }
 
+
+
+    function firstDay($month = '', $year = '')
+    {
+        if (empty($month)) {
+            $month = date('m');
+        }
+        if (empty($year)) {
+            $year = date('Y');
+        }
+        $result = strtotime("{$year}-{$month}-01");
+        return date('Y-m-d', $result);
+    }
 
 }
 

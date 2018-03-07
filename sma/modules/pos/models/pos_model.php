@@ -186,6 +186,16 @@ class Pos_model extends CI_Model
         return FALSE;
     }
 
+    public function getCustomerCreditById($name)
+    {
+        $q = $this->db->get_where('customers_credit_history', array('customer_id' => $name), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+
+        return FALSE;
+    }
+
     public function getCustomerByName($name)
     {
         $q = $this->db->get_where('customers', array('name' => $name), 1);
@@ -681,7 +691,7 @@ class Pos_model extends CI_Model
         }
     }
 
-    public function addSale($saleDetails = array(), $items = array(), $warehouse_id, $sid = NULL)
+    public function addSale($saleDetails = array(), $items = array(), $warehouse_id, $sid = NULL,$credit_obj)
     {
 
         // sale data
@@ -713,6 +723,8 @@ class Pos_model extends CI_Model
             'return_ref' => $saleDetails['return_ref']
         );
 
+
+
         if ($this->db->insert('sales', $saleData)) {
             $sale_id = $this->db->insert_id();
 
@@ -728,12 +740,14 @@ class Pos_model extends CI_Model
                 $var = array_merge($addOn, $var);
             }
 
-            if ($this->db->insert_batch('sale_items', $items)) {
-                if ($sid) {
-                    $this->deleteSale($sid);
+            if($this->db->update('customers_credit_history',array('current_credit'=>$credit_obj['current_credit'],'updated_by'=>USER_NAME,'updated_on'=>date('Y-m-d H:i:s')),array('customer_id'=>$credit_obj['id']))){
+                if ($this->db->insert_batch('sale_items', $items)) {
+                    if ($sid) {
+                        $this->deleteSale($sid);
+                    }
+                    return $sale_id;
                 }
-                return $sale_id;
-            }
+            } else return false;
         }
 
         return false;
