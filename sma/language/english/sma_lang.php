@@ -310,6 +310,7 @@ $lang['product_alerts'] 				= "Product Alerts";
 $lang['report_type'] 					= "Report Type";
 $lang['get_report'] 					= "Get Report";
 $lang['stock_balance'] 					= "Stock Balance";
+$lang['total_items'] 				= "Total Items";
 $lang['no_report'] 						= "Nothing to display! Please try again with different query";
 $lang['start_date'] 					= "Start Date";
 $lang['end_date'] 						= "End Date";

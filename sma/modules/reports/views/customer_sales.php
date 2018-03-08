@@ -204,6 +204,7 @@ echo" # ". $this->input->post('start_date') . " - " . $this->input->post('end_da
                 <option value="CC" <?php if($_POST['paid_by']=='CC') echo "selected"; ?>>Cards</option>
                 <option value="CC_cash" <?php if($_POST['paid_by']=='CC_cash') echo "selected"; ?>>Card & Cash</option>
                 <option value="Cheque" <?php if($_POST['paid_by']=='Cheque') echo "selected"; ?>><?php echo $this->lang->line("cheque"); ?></option>
+                <option value="Credit" <?php if($_POST['paid_by']=='Credit') echo "selected"; ?>>Credit</option>
             </select>
         </div>
     </div>

@@ -398,8 +398,8 @@ class Pos extends MX_Controller
             } else {
 
                 $customer_credit_limits=$this->pos_model->getCustomerCreditById($customer_id);
-                if($customer_credit_limits && $paid_by == 'Cheque'){
-                    if($customer_credit_limits->current_credit < $gTotal){
+                if($paid_by == 'Credit'){
+                    if(!$customer_credit_limits || $customer_credit_limits->current_credit < $gTotal){
                         $this->session->set_flashdata('message', "Customer don't have sufficient credit for this purchase.");
                         redirect("module=pos", 'refresh');
                     }else{
@@ -409,6 +409,8 @@ class Pos extends MX_Controller
                             'id'=>$customer_id
                         );
                     }
+                }else{
+
                 }
 				foreach($items as $item){
 					$getDetails=$this->pos_model->getProductByIdAndWH($item['product_id'],$warehouse_id);

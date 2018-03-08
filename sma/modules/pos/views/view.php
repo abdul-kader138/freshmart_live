@@ -43,8 +43,10 @@ h3 { margin: 5px 0; }
 	} 
 	echo '<div style="clear:both;"></div>';
 	echo "<span class=\"left\">".$this->lang->line("customer").": ". $inv->customer_name."</span> 
-	<span class=\"right\">".$this->lang->line("date").": ".date(PHP_DATE, strtotime($inv->date))."</span>"; 
+	<span class=\"right\">".$this->lang->line("date").": ".date(PHP_DATE, strtotime($inv->date))."</span>";?>
+    <?php echo "<span class=\"left\">Payment Method:".$inv->paid_by."</span>";
 	 ?>
+
     <div style="clear:both;"></div>
     
 	<table class="table" cellspacing="0"  border="0"> 
@@ -150,7 +152,18 @@ h3 { margin: 5px 0; }
     <div style="border-top:1px solid #000; padding-top:10px;">
     <?php echo html_entity_decode($biller->invoice_footer); ?>
     </div>
-    
+    <?php if($inv->paid_by =='Credit') { ?>
+    <p>&nbsp;</p>
+    <table width="100%">
+        <tr>
+            <td style="width:23%; text-align:center">
+                <div style="float:left; margin:5px 15px">
+                    <p style="border-top: 1px solid #000;">Customer Signature</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <?php } ?>
     <div id="buttons" style="padding-top:10px; text-transform:uppercase;">
     <span class="left"><a href="#" style="width:90%; display:block; font-size:12px; text-decoration: none; text-align:center; color:#000; background-color:#4FA950; border:2px solid #4FA950; padding: 10px 1px; font-weight:bold;" id="email"><?php echo $this->lang->line("email"); ?></a></span>
     <span class="right"><button type="button" onClick="window.print();return false;" style="width:100%; cursor:pointer; font-size:12px; background-color:#FFA93C; color:#000; text-align: center; border:1px solid #FFA93C; padding: 10px 1px; font-weight:bold;"><?php echo $this->lang->line("print"); ?></button></span>

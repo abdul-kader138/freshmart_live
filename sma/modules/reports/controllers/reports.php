@@ -334,6 +334,7 @@ class Reports extends MX_Controller
             $end_date = $this->ion_auth->fsd($end_date);
         }
 
+
         $sr = "( SELECT sale_items.sale_id,sale_items.product_id,  (COALESCE((COALESCE( sales_item_return.return_qty, 0 )* COALESCE( sales_item_return.price, 0 )),0))  as return_val FROM `sale_items` inner join sales_item_return on sale_items.sale_id=sales_item_return.sales_id and sale_items.product_id=sales_item_return.product_id and  sale_items.id=sales_item_return.sales_item_id where sales_item_return.warehouse_id='{$warehouse}' group by sale_items.product_id,sale_items.id) sReturn";
 
 
@@ -354,6 +355,9 @@ class Reports extends MX_Controller
         }
         if ($start_date) {
             $this->datatables->where('sales.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+        }
+        if ($paid_by) {
+            $this->datatables->where('sales.paid_by = ', $paid_by);
         }
         /*$this->datatables->add_column("Actions",
             "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='".$this->lang->line("view_invoice")."' class='tip'><i class='icon-fullscreen'></i></a>

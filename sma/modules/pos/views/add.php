@@ -122,7 +122,8 @@
         </div>
         <div id="lefttop">
             <div style="clear:left;"></div>
-            <input value="<?php echo $customer->name; ?>" id="customer" name="customer" class="customer"
+<!--            <input value="--><?php //echo $customer->name; ?><!--" id="customer" name="customer" class="customer"-->
+            <input value="" id="customer" name="customer" class="customer"
                    style="width:330px;float: left;" placeholder="Customer - Type 2 char for suggestions"
                    onClick="this.select();">
             <a href="#" id="showCustomerModal" role="button" data-toggle="modal"
@@ -139,7 +140,7 @@
             <!--                        add wh here-->
             <div class="control-group">
                 <div class="controls">  <?php
-//                    $wh[''] = '';
+                    //                    $wh[''] = '';
                     foreach ($warehouses as $warehouse) {
                         $wh[$warehouse->id] = $warehouse->name;
                     }
@@ -185,7 +186,7 @@
                         <span id="total">0.00</span></td>
                 </tr>
                 <?php if (TAX1 || TAX2) { ?>
-                                <tr>
+                    <tr>
                         <?php if (TAX1 && !TAX2) { ?>
                             <td></td>
                             <td></td>
@@ -481,10 +482,10 @@
 
                 <div class="controls">
                     <select name="paid_by" id="paid_by">
-                        <option value="cash"><?php echo $this->lang->line("cash"); ?></option>
+                        <option value="Cash"><?php echo $this->lang->line("cash"); ?></option>
                         <option value="CC"><?php echo $this->lang->line("cc"); ?></option>
                         <option value="CC_cash"><?php echo $this->lang->line("Card & Cash"); ?></option>
-                        <!--                        <option value="CC_cash">Card & Cash</option>-->
+                        <option value="Credit">Credit</option>
                         <option value="Cheque"><?php echo $this->lang->line("cheque"); ?></option>
                     </select>
                 </div>
@@ -1568,16 +1569,17 @@ function () {
     bootbox.alert('<?php echo $this->lang->line('ajax_error'); ?>');
     $('.ui-autocomplete-loading').removeClass("ui-autocomplete-loading");
 }
-});
+})
+;
 
 
 $('#scancode').keydown(function (e) {
     if (e.keyCode == 13) {
 
-        if (count >= 1000) {
-            bootbox.alert("<?php echo $this->lang->line('qty_limit'); ?>");
-            return false;
-        }
+//        if (count >= 10000) {
+//            bootbox.alert("<?php //echo $this->lang->line('qty_limit'); ?>//");
+//            return false;
+//        }
         if (an >= 51) {
             bootbox.alert("<?php echo $this->lang->line('max_pro_reached'); ?>");
             $('#gmail_loading').hide();
@@ -1846,6 +1848,11 @@ $("#payment").click(function () {
         bootbox.alert('<?php echo $this->lang->line('warehouse_message'); ?>');
         return false;
     }
+    var customer = $("#customer").val();
+    if (customer == undefined || customer == 0) {
+        bootbox.alert('<?php echo $this->lang->line('customer_message'); ?>');
+        return false;
+    }
 
     if (isNaN(twt) || twt == 0) {
         bootbox.alert('<?php echo $this->lang->line('x_total'); ?>');
@@ -1876,7 +1883,7 @@ $("#payment").click(function () {
 
         var p_val = $(this).val();
         $('#rpaidby').val(p_val);
-        if (p_val == 'cash') {
+        if (p_val == 'Cash') {
             $('#paid-amount').val(0);
             $('.pcheque').hide();
             $('.pcc').hide();
@@ -1890,8 +1897,8 @@ $("#payment").click(function () {
                         return false;
                     }
                     $("#balance").empty();
-                    var return_amount=0;
-                    if($("#twt_return").val()) return_amount=$("#twt_return").val();
+                    var return_amount = 0;
+                    if ($("#twt_return").val()) return_amount = $("#twt_return").val();
                     var balance = (paid - twt);
                     balance = parseFloat(balance).toFixed(2);
                     $("#balance").append(balance);
@@ -1910,6 +1917,11 @@ $("#payment").click(function () {
             $('.pcash').hide();
             $('.pcc_chash').hide();
             $('.pcheque').show();
+        } else if (p_val == 'Credit') {
+            $('.pcc').hide();
+            $('.pcash').hide();
+            $('.pcc_chash').hide();
+            $('.pcc_chash').hide();
         } else if (p_val == 'CC_cash') {
             $('#paid-amount').val(0);
             $('#pcc_holder').val("");
@@ -1919,15 +1931,13 @@ $("#payment").click(function () {
             $('.pcash').hide();
             $('.pcheque').hide();
             $('.pcc_chash').show();
-            $('.pcash').show();
+//            $('.pcash').show();
 
 
             $('#paid-amount').val("");
             $('#cc_amount').val("");
             $('#pcc_holder').val("");
             $('#pcc').val("");
-
-
             $('input[id^="paid-amount"]').keydown(function (e) {
                 var cardVal = $('#cc_amount').val();
                 if (cardVal == undefined || cardVal == '') cardVal = 0;
@@ -1938,8 +1948,8 @@ $("#payment").click(function () {
                         return false;
                     }
                     $("#balance").empty();
-                    var return_amount=0;
-                    if($("#twt_return").val()) return_amount=$("#twt_return").val();
+                    var return_amount = 0;
+                    if ($("#twt_return").val()) return_amount = $("#twt_return").val();
                     var balance = ((paid + cardVal) - (twt));
                     balance = parseFloat(balance).toFixed(2);
                     $("#balance").append(balance);
@@ -1948,13 +1958,13 @@ $("#payment").click(function () {
                     return false;
                 }
             });
-
-        } else {
-            $('.pcheque').hide();
-            $('.pcc').hide();
-            $('.pcash').hide();
-            $('.pcc_chash').hide();
         }
+//        } else {
+//            $('.pcheque').hide();
+//            $('.pcc').hide();
+//            $('.pcash').hide();
+//            $('.pcc_chash').hide();
+//        }
     });
 
     $('#paid-amount').keyboard({
@@ -1992,8 +2002,8 @@ $("#payment").click(function () {
             var paid = 0;
             var selectedVal = $('#paid_by').find(":selected").val();
 
-            var return_amount=0;
-            if($("#twt_return").val()) return_amount=$("#twt_return").val();
+            var return_amount = 0;
+            if ($("#twt_return").val()) return_amount = $("#twt_return").val();
             if (selectedVal == 'CC_cash') {
                 var cardVal = $('#cc_amount').val();
                 var cashVal = $('#paid-amount').val();
@@ -2001,7 +2011,7 @@ $("#payment").click(function () {
                 if (cashVal == undefined || cashVal == '') cashVal = 0;
                 paid = parseFloat(cashVal) + parseFloat(cardVal);
             }
-            if (selectedVal == 'cash') {
+            if (selectedVal == 'Cash') {
                 var cashVal = $('#paid-amount').val();
                 if (cashVal == undefined || cashVal == '') cashVal = 0;
                 paid = parseFloat(cashVal);
@@ -2093,8 +2103,8 @@ $("#paymentModal").on("click", '#submit-sale', function () {
     if (selectedVal == 'CC_cash') {
         var cardVal = $('#cc_amount').val();
         var cashVal = $('#paid-amount').val();
-        var return_amount=0;
-        if($("#twt_return").val()) return_amount=$("#twt_return").val();
+        var return_amount = 0;
+        if ($("#twt_return").val()) return_amount = $("#twt_return").val();
         if (cardVal == undefined || cardVal == '') cardVal = 0;
         if (cashVal == undefined || cashVal == '') cashVal = 0;
         paid = parseFloat(cashVal) + parseFloat(cardVal);
@@ -2112,11 +2122,11 @@ $("#paymentModal").on("click", '#submit-sale', function () {
         }
     }
 
-    if (selectedVal == 'cash') {
+    if (selectedVal == 'Cash') {
         var cashVal = $('#paid-amount').val();
         paid = parseFloat(cashVal);
-        var return_amount=0;
-        if($("#twt_return").val()) return_amount=$("#twt_return").val();
+        var return_amount = 0;
+        if ($("#twt_return").val()) return_amount = $("#twt_return").val();
         if (paid < twt) {
             bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
             $(this).val('');
