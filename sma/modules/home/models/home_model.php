@@ -253,6 +253,39 @@ class Home_model extends CI_Model
         return date('Y-m-d', $result);
     }
 
+    public function topNonMovementCategory()
+    {
+
+
+        $q=$this->db->query("select sum(va) as val, name from (select categories.name,products.name as n,products.quantity, products.cost, (products.quantity * products.cost) as va from products inner join categories on products.category_id=categories.id where products.quantity!=0 and products.id NOT IN (select product_id from sale_items)) as a GROUP by name ORDER by val desc");
+
+
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+        return FALSE;
+    }
+
+    public function topPurchaseCategory()
+    {
+
+
+        $q=$this->db->query("select a.name, sum(a.val) as val from (select categories.name,make_mrr.purchase_item_name, make_mrr.received_qty,products.price, (make_mrr.received_qty*products.price) as val from make_mrr inner join products on make_mrr.purchase_item_id=products.id  INNER join categories on products.category_id=categories.id where mrr_date between '".$this->firstDay()."' and '".date('Y-m-d')."') as a GROUP by a.name");
+
+        if($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+
+            return $data;
+        }
+        return FALSE;
+    }
+
 }
 
 /* End of file home_model.php */ 

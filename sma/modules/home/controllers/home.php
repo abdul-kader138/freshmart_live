@@ -60,6 +60,8 @@ class Home extends CI_Controller {
 	  $data['topProducts'] = $this->home_model->topProducts();
 	  $data['topCategoryMargin'] = $this->home_model->topCategoryMargin();
 	  $data['getMonthlySaleMargin'] = $this->home_model->getMonthlySaleMargin();
+	  $data['topNonMovementCategory'] = $this->home_model->topNonMovementCategory();
+	  $data['topPurchaseCategory'] = $this->home_model->topPurchaseCategory();
 	  $data['stock'] = $this->home_model->getStockValue();
 
       $meta['page_title'] = $this->lang->line("welcome")." ".SITE_NAME."!";

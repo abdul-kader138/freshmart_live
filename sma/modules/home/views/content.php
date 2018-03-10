@@ -247,63 +247,70 @@ $(function () {
             ]
     });
 });
-$(function () {
-    $('#tp').highcharts({
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false
-        },
-        title: {
-            text: '<?php echo $this->lang->line("best_sellers")."-(".date('F Y').")"; ?>',
-            style: {
-                fontSize: '12px',
-                padding: '10px',
-                fontWeight: 'bold',
-                color: '#000000'
-            }
-        },
-        credits: {
-            enabled: false
-        },
-        tooltip: {
-            shared: true,
-            headerFormat: '<span style="font-size:12px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:4px">{series.name}: </td>' +
-            '<td style="color:{series.color};padding:4px;text-align:right;"> <b>{point.y}</b></td></tr>',
-            footerFormat: '</table>',
-            useHTML: true,
-            style: {
-                fontSize: '13px',
-                padding: '10px',
-                fontWeight: 'bold',
-                color: '#000000'
-            }
-        },
 
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: false,
-                },
-                showInLegend: false
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: '<?=$this->lang->line('total_sold')?>',
-            data: [
-                <?php
-            foreach($topProducts as $tp) {
-				echo "['".$tp->name." (".$tp->code.")', ".$tp->val."],";
 
-            } ?>
-            ]
-        }]
-    });
-});
+///  item wise best seller
+
+//$(function () {
+//    $('#tp').highcharts({
+//        chart: {
+//            plotBackgroundColor: null,
+//            plotBorderWidth: null,
+//            plotShadow: false
+//        },
+//        title: {
+//            text: '<?php //echo $this->lang->line("best_sellers")."-(".date('F Y').")"; ?>//',
+//            style: {
+//                fontSize: '12px',
+//                padding: '10px',
+//                fontWeight: 'bold',
+//                color: '#000000'
+//            }
+//        },
+//        credits: {
+//            enabled: false
+//        },
+//        tooltip: {
+//            shared: true,
+//            headerFormat: '<span style="font-size:12px">{point.key}</span><table>',
+//            pointFormat: '<tr><td style="color:{series.color};padding:4px">{series.name}: </td>' +
+//            '<td style="color:{series.color};padding:4px;text-align:right;"> <b>{point.y}</b></td></tr>',
+//            footerFormat: '</table>',
+//            useHTML: true,
+//            style: {
+//                fontSize: '13px',
+//                padding: '10px',
+//                fontWeight: 'bold',
+//                color: '#000000'
+//            }
+//        },
+//
+//        plotOptions: {
+//            pie: {
+//                allowPointSelect: true,
+//                cursor: 'pointer',
+//                dataLabels: {
+//                    enabled: false,
+//                },
+//                showInLegend: false
+//            }
+//        },
+//        series: [{
+//            type: 'pie',
+//            name: '<?//=$this->lang->line('total_sold')?>//',
+//            data: [
+//                <?php
+//            foreach($topProducts as $tp) {
+//				echo "['".$tp->name." (".$tp->code.")', ".$tp->val."],";
+//
+//            } ?>
+//            ]
+//        }]
+//    });
+//});
+
+
+
 $(function () {
     $('#tpc').highcharts({
         chart: {
@@ -362,6 +369,8 @@ $(function () {
     });
 });
 
+
+
 $(function () {
     $('#tpcm').highcharts({
         chart: {
@@ -408,7 +417,7 @@ $(function () {
         },
         series: [{
             type: 'pie',
-            name: '<?=$this->lang->line('total_sold')?>',
+            name: 'Total Margin',
             data: [
                 <?php
             foreach($topCategoryMargin as $tpcm) {
@@ -420,6 +429,123 @@ $(function () {
     });
 });
 
+$(function () {
+    $('#tpnmv').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: '<?php echo $this->lang->line("non_movement_category")."-(".date('F Y').")"; ?>',
+            style: {
+                fontSize: '12px',
+                padding: '10px',
+                fontWeight: 'bold',
+                color: '#000000'
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            shared: true,
+            headerFormat: '<span style="font-size:12px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:4px">{series.name}: </td>' +
+            '<td style="color:{series.color};padding:4px;text-align:right;"> <b>{point.y}</b></td></tr>',
+            footerFormat: '</table>',
+            useHTML: true,
+            style: {
+                fontSize: '13px',
+                padding: '10px',
+                fontWeight: 'bold',
+                color: '#000000'
+            }
+        },
+
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false,
+                },
+                showInLegend: false
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Total Value',
+            data: [
+                <?php
+            foreach($topNonMovementCategory as $tpcm) {
+				echo "['".$tpcm->name."', ".$tpcm->val."],";
+
+            } ?>
+            ]
+        }]
+    });
+});
+
+
+
+$(function () {
+    $('#tppc').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: '<?php echo $this->lang->line("best_purchase_category_margin")."-(".date('F Y').")"; ?>',
+            style: {
+                fontSize: '12px',
+                padding: '10px',
+                fontWeight: 'bold',
+                color: '#000000'
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            shared: true,
+            headerFormat: '<span style="font-size:12px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:4px">{series.name}: </td>' +
+            '<td style="color:{series.color};padding:4px;text-align:right;"> <b>{point.y}</b></td></tr>',
+            footerFormat: '</table>',
+            useHTML: true,
+            style: {
+                fontSize: '13px',
+                padding: '10px',
+                fontWeight: 'bold',
+                color: '#000000'
+            }
+        },
+
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false,
+                },
+                showInLegend: false
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Total Value',
+            data: [
+                <?php
+            foreach($topPurchaseCategory as $tppc) {
+				echo "['".$tppc->name."', ".$tppc->val."],";
+
+            } ?>
+            ]
+        }]
+    });
+});
 
 </script>
 <?php if ($message) {
@@ -459,17 +585,17 @@ $(function () {
 <!--            <div id="chart" style="width:100%; height:300px;"></div>-->
 <!--        </div>-->
 <!--    </div>-->
-    <div class="span4">
-        <div class="well well-small">
-            <div id="tp" style="width:100%; height:300px;"></div>
-        </div>
-    </div>
-    <div class="span4">
+<!--    <div class="span4">-->
+<!--        <div class="well well-small">-->
+<!--            <div id="tp" style="width:100%; height:300px;"></div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="span6">
         <div class="well well-small">
             <div id="tpc" style="width:100%; height:300px;"></div>
         </div>
     </div>
-    <div class="span4">
+    <div class="span6">
         <div class="well well-small">
             <div id="tpcm" style="width:100%; height:300px;"></div>
         </div>
@@ -477,21 +603,20 @@ $(function () {
 
 
 </div>
+<div class="row-fluid">
+    <div class="span6">
+        <div class="well well-small">
+            <div id="tppc" style="width:100%; height:300px;"></div>
+        </div>
+    </div>
+    <div class="span6">
+        <div class="well well-small">
+            <div id="tpnmv" style="width:100%; height:300px;"></div>
+        </div>
+    </div>
 
-<!--<div class="row-fluid">-->
-<!--    <div class="span7">-->
-<!--        <div class="well well-small">-->
-<!--            <div id="chart" style="width:100%; height:300px;"></div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="span5">-->
-<!--        <div class="well well-small">-->
-<!--            <div id="tpcm" style="width:100%; height:300px;"></div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!---->
-<!---->
-<!--</div>-->
+
+</div>
 
 <?php if ($this->ion_auth->in_group(array('owner', 'admin'))) { ?>
     <ul class="dash">
