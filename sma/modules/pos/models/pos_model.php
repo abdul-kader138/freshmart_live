@@ -188,7 +188,7 @@ class Pos_model extends CI_Model
 
     public function getCustomerCreditById($name)
     {
-        $q = $this->db->get_where('customers_credit_history', array('customer_id' => $name), 1);
+        $q = $this->db->get_where('customers_credit_history', array('customer_id' => $name, 'credit_start_date <= '=>date('Y-m-d'),'credit_end_date >='=>date('Y-m-d')), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -205,6 +205,8 @@ class Pos_model extends CI_Model
 
         return FALSE;
     }
+
+
 
     public function getAllBillers()
     {
@@ -740,14 +742,24 @@ class Pos_model extends CI_Model
                 $var = array_merge($addOn, $var);
             }
 
-            if($this->db->update('customers_credit_history',array('current_credit'=>$credit_obj['current_credit'],'updated_by'=>USER_NAME,'updated_on'=>date('Y-m-d H:i:s')),array('customer_id'=>$credit_obj['id']))){
-                if ($this->db->insert_batch('sale_items', $items)) {
-                    if ($sid) {
-                        $this->deleteSale($sid);
+            if($credit_obj){
+                if($this->db->update('customers_credit_history',array('current_credit'=>$credit_obj['current_credit'],'updated_by'=>USER_NAME,'updated_on'=>date('Y-m-d H:i:s')),array('customer_id'=>$credit_obj['id']))){
+                    if ($this->db->insert_batch('sale_items', $items)) {
+                        if ($sid) {
+                            $this->deleteSale($sid);
+                        }
+                        return $sale_id;
                     }
-                    return $sale_id;
-                }
-            } else return false;
+                } else return false;
+            }else{
+                    if ($this->db->insert_batch('sale_items', $items)) {
+                        if ($sid) {
+                            $this->deleteSale($sid);
+                        }
+                        return $sale_id;
+                    }
+            }
+
         }
 
         return false;

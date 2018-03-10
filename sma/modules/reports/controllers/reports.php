@@ -301,8 +301,6 @@ class Reports extends MX_Controller
     {
         if ($this->input->get('customer')) {
             $customer = $this->input->get('customer');
-        } else {
-            $customer = NULL;
         }
         if ($this->input->get('warehouse')) {
             $warehouse = $this->input->get('warehouse');
@@ -311,23 +309,15 @@ class Reports extends MX_Controller
         }
         if ($this->input->get('reference_no')) {
             $reference_no = $this->input->get('reference_no');
-        } else {
-            $reference_no = NULL;
         }
         if ($this->input->get('start_date')) {
             $start_date = $this->input->get('start_date');
-        } else {
-            $start_date = NULL;
         }
         if ($this->input->get('end_date')) {
             $end_date = $this->input->get('end_date');
-        } else {
-            $end_date = NULL;
         }
         if ($this->input->get('paid_by')) {
             $paid_by = $this->input->get('paid_by');
-        } else {
-            $paid_by = NULL;
         }
         if ($start_date) {
             $start_date = $this->ion_auth->fsd($start_date);
@@ -335,7 +325,7 @@ class Reports extends MX_Controller
         }
 
 
-        $sr = "( SELECT sale_items.sale_id,sale_items.product_id,  (COALESCE((COALESCE( sales_item_return.return_qty, 0 )* COALESCE( sales_item_return.price, 0 )),0))  as return_val FROM `sale_items` inner join sales_item_return on sale_items.sale_id=sales_item_return.sales_id and sale_items.product_id=sales_item_return.product_id and  sale_items.id=sales_item_return.sales_item_id where sales_item_return.warehouse_id='{$warehouse}' group by sale_items.product_id,sale_items.id) sReturn";
+        $sr = "( SELECT sale_items.sale_id,sale_items.product_id,  (COALESCE((COALESCE( sales_item_return.return_qty, 0 )* COALESCE( sales_item_return.price, 0 )),0))  as return_val FROM `sale_items` inner join sales_item_return on sale_items.sale_id=sales_item_return.sales_id and sale_items.product_id=sales_item_return.product_id and  sale_items.id=sales_item_return.sales_item_id where sales_item_return.warehouse_id='{$warehouse}' group by sale_items.product_id,sale_items.sale_id) sReturn";
 
 
         $this->load->library('datatables');
@@ -368,7 +358,7 @@ class Reports extends MX_Controller
 
         $this->datatables->unset_column('pid');
 
-
+//echo $customer;
         echo $this->datatables->generate();
     }
 

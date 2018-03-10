@@ -69,10 +69,6 @@ foreach ($monthly_sales as $month_sale) {
 foreach ($getMonthlySaleMargin as $sales_margin) {
     $sales_months[] = date('M-Y', strtotime($sales_margin->month));
     $sales_val[] = $sales_margin->sales;
-//    $tax1[] = $month_sale->tax1;
-//    $tax2[] = $month_sale->tax2;
-//    $purchases[] = $month_sale->purchases;
-//    $tax3[] = $month_sale->ptax;
 }
 
 /*

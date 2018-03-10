@@ -396,9 +396,11 @@ class Pos extends MX_Controller
                     redirect("module=pos", 'refresh');
                 }
             } else {
-
+                $current_customer=$this->pos_model->getCustomerById($customer_id);
                 $customer_credit_limits=$this->pos_model->getCustomerCreditById($customer_id);
-                if($paid_by == 'Credit'){
+                if($paid_by == 'Credit' && $current_customer->cf3 == 'Regular'){
+
+                    //check for regular customer and its credit
                     if(!$customer_credit_limits || $customer_credit_limits->current_credit < $gTotal){
                         $this->session->set_flashdata('message', "Customer don't have sufficient credit for this purchase.");
                         redirect("module=pos", 'refresh');
@@ -409,8 +411,6 @@ class Pos extends MX_Controller
                             'id'=>$customer_id
                         );
                     }
-                }else{
-
                 }
 				foreach($items as $item){
 					$getDetails=$this->pos_model->getProductByIdAndWH($item['product_id'],$warehouse_id);
@@ -419,6 +419,7 @@ class Pos extends MX_Controller
                       redirect("module=pos", 'refresh');
 						}
 					}
+//                if ($saleID = $this->pos_model->addSale($saleDetails, $items, $warehouse_id, $did,$credit_obj)) {
                 if ($saleID = $this->pos_model->addSale($saleDetails, $items, $warehouse_id, $did,$credit_obj)) {
                     $this->session->set_flashdata('success_message', $this->lang->line("sale_added"));
                     redirect("module=pos&view=view_invoice&id=" . $saleID, 'refresh');

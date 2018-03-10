@@ -70,27 +70,7 @@ class Home_model extends CI_Model
 	
 	public function getChartData() 
 	{
-		$myQuery = "SELECT S.month,
-					   COALESCE(S.sales, 0) as sales,
-					   COALESCE( P.purchases, 0 ) as purchases,
-					   COALESCE(S.tax1, 0) as tax1,
-					   COALESCE(S.tax2, 0) as tax2,
-					   COALESCE( P.ptax, 0 ) as ptax
-					FROM (	SELECT	date_format(date, '%Y-%m') Month,
-								SUM(sale_items.quantity*sale_items.unit_price) Sales,
-								SUM(total_tax) tax1,
-								SUM(total_tax2) tax2
-						FROM sales inner join sale_items on sales.id=sale_items.sale_id
-						WHERE sales.date >= date_sub( now( ) , INTERVAL 6 MONTH )
-						GROUP BY date_format(date, '%Y-%m')) S
-					LEFT JOIN (	SELECT	date_format(date, '%Y-%m') Month,
-									SUM(total_tax) ptax,
-									SUM(total) purchases
-							FROM purchases
-							GROUP BY date_format(date, '%Y-%m')) P
-					ON S.Month = P.Month
-					GROUP BY S.Month
-					ORDER BY S.Month";
+		$myQuery = "SELECT S.month, COALESCE(S.sales, 0) as sales, COALESCE( P.purchases, 0 ) as purchases, COALESCE(S.tax1, 0) as tax1, COALESCE(S.tax2, 0) as tax2, COALESCE( P.ptax, 0 ) as ptax FROM ( SELECT date_format(date, '%Y-%m') Month, SUM(sale_items.quantity*sale_items.unit_price) Sales, SUM(total_tax) tax1, SUM(total_tax2) tax2 FROM sales inner join sale_items on sales.id=sale_items.sale_id WHERE sales.date >= date_sub( now( ) , INTERVAL 6 MONTH ) GROUP BY date_format(date, '%Y-%m')) S LEFT JOIN ( SELECT date_format(mrr_date, '%Y-%m') Month, SUM(tax_val) ptax, SUM(inv_val) purchases FROM make_mrr GROUP BY date_format(mrr_date, '%Y-%m')) P ON S.Month = P.Month GROUP BY S.Month ORDER BY S.Month";
 		$q = $this->db->query($myQuery);
 		if($q->num_rows() > 0) {
 			foreach (($q->result()) as $row) {
@@ -257,7 +237,7 @@ class Home_model extends CI_Model
     {
 
 
-        $q=$this->db->query("select sum(va) as val, name from (select categories.name,products.name as n,products.quantity, products.cost, (products.quantity * products.cost) as va from products inner join categories on products.category_id=categories.id where products.quantity!=0 and products.id NOT IN (select product_id from sale_items)) as a GROUP by name ORDER by val desc");
+        $q=$this->db->query("select sum(va) as val, name from (select categories.name,products.name as n,products.quantity, products.cost, (products.quantity * products.cost) as va from products inner join categories on products.category_id=categories.id where products.quantity!=0 and products.id NOT IN (select product_id from sale_items)) as a GROUP by name order by val DESC LIMIT 10");
 
 
         if($q->num_rows() > 0) {
@@ -274,7 +254,7 @@ class Home_model extends CI_Model
     {
 
 
-        $q=$this->db->query("select a.name, sum(a.val) as val from (select categories.name,make_mrr.purchase_item_name, make_mrr.received_qty,products.price, (make_mrr.received_qty*products.price) as val from make_mrr inner join products on make_mrr.purchase_item_id=products.id  INNER join categories on products.category_id=categories.id where mrr_date between '".$this->firstDay()."' and '".date('Y-m-d')."') as a GROUP by a.name");
+        $q=$this->db->query("select a.name, sum(a.val) as val from (select categories.name,make_mrr.purchase_item_name, make_mrr.received_qty,products.price, make_mrr.inv_val as val from make_mrr inner join products on make_mrr.purchase_item_id=products.id  INNER join categories on products.category_id=categories.id where mrr_date between '".$this->firstDay()."' and '".date('Y-m-d')."') as a GROUP by a.name order by a.val DESC LIMIT 10");
 
         if($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
