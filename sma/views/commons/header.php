@@ -200,6 +200,9 @@
                 <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=update_price"><?php echo $this->lang->line('update_price'); ?></a>
             </li>
             <li>
+                <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=update_alert_quantity"><?php echo $this->lang->line('update_alert'); ?></a>
+            </li>
+            <li>
                 <a href="<?php echo base_url(); ?>index.php?module=products&amp;view=update_warehouse_qty"><?php echo $this->lang->line('update_warehouse_qty'); ?></a>
             </li>
             <li>

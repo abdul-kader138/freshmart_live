@@ -231,6 +231,16 @@ class Products_model extends CI_Model
         }
     }
 
+    public function updateAlertQuantity($data = array())
+    {
+
+        if ($this->db->update_batch('products', $data, 'code')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     public function updateQty($data = array())
     {
