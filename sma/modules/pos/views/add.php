@@ -124,8 +124,7 @@
             <div style="clear:left;"></div>
 <!--            <input value="--><?php //echo $customer->name; ?><!--" id="customer" name="customer" class="customer"-->
             <input value="" id="customer" name="customer" class="customer"
-                   style="width:370px;float: left;" placeholder="Enter Customer ID"
-                   onClick="this.select();">
+                   style="width:370px;float: left;" placeholder="Enter Customer ID">
 
             <div style="clear:left;"></div>
             <input id="scancode" name="code" class="scancode"
@@ -1539,46 +1538,48 @@ function key_pad() {
 
 }
 
-$("#customer1").autocomplete({
-    source: function (request, response) {
-        $.ajax({
-            url: "<?php echo site_url('module=customers&view=suggestions'); ?>",
-            data: {
-        <?php echo $this->security->get_csrf_token_name(); ?>:
-        "<?php echo $this->security->get_csrf_hash() ?>", term
-        :
-        $("#customer").val()
-    },
-    dataType: "json",
-    type: "get",
-    success: function (data) {
-        var id = Object.keys(data);
-        console.log(id);
-//        var val = Object.Value(data);
-//        if(id){
-//        $("#customer").val(id)
-        $("#customer_id_from_db").val(id);
-//        }
-        response(data);
-
-    }
-});
-},
-minLength: 2,
-    error
-:
-function () {
-    bootbox.alert('<?php echo $this->lang->line('ajax_error'); ?>');
-    $('.ui-autocomplete-loading').removeClass("ui-autocomplete-loading");
-}
-})
-;
+//$("#customer1").autocomplete({
+//    source: function (request, response) {
+//        $.ajax({
+//            url: "<?php //echo site_url('module=customers&view=suggestions'); ?>//",
+//            data: {
+//        <?php //echo $this->security->get_csrf_token_name(); ?>//:
+//        "<?php //echo $this->security->get_csrf_hash() ?>//", term
+//        :
+//        $("#customer").val()
+//    },
+//    dataType: "json",
+//    type: "get",
+//    success: function (data) {
+//        var id = Object.keys(data);
+//        console.log(id);
+////        var val = Object.Value(data);
+////        if(id){
+////        $("#customer").val(id)
+//        $("#customer_id_from_db").val(id);
+////        }
+//        response(data);
+//
+//    }
+//});
+//},
+//minLength: 2,
+//    error
+//:
+//function () {
+//    bootbox.alert('<?php //echo $this->lang->line('ajax_error'); ?>//');
+//    $('.ui-autocomplete-loading').removeClass("ui-autocomplete-loading");
+//}
+//})
+//;
 
 
 
 ///////
 
-$('#customer').blur(function (e) {
+$('#customer').on("blur",function(e){
+//$("#customer").autocompl/ete({
+//    source: function (request, response) {
 
 
         $('#gmail_loading').show();
@@ -1617,6 +1618,58 @@ $('#customer').blur(function (e) {
 
 });
 
+});
+////////
+
+$('#scancode').keydown(function (e) {
+    if (e.keyCode == 13) {
+//$("#customer").autocompl/ete({
+//    source: function (request, response) {
+
+
+        $('#gmail_loading').show();
+        var v = $(this).val();
+        $.ajax({
+            type: "get",
+            async: false,
+            url: "<?php echo site_url('module=customers&view=suggestions'); ?>",
+            data: {
+        <?php echo $this->security->get_csrf_token_name(); ?>:
+        "<?php echo $this->security->get_csrf_hash() ?>", term
+    :
+        v
+    }
+    ,
+    dataType: "json",
+        success
+    :
+    function (data) {
+        var id = Object.keys(data);
+        if (data.length != 0 || data.length == undefined) {
+            $("#customer_id_from_db").val(id);
+            $("#customer").val(data[id]);
+        } else {
+            $("#customer_id_from_db").val("");
+            $("#customer").val("");
+        }
+
+    }
+
+    ,
+    error: function () {
+        $("#customer_id_from_db").val("");
+        $("#customer").val("");
+    }
+
+});
+}
+});
+
+$('#customer').bind('keypress', function (e) {
+    if (e.keyCode == 13) {
+        e.preventDefault();
+        return false;
+    }
 });
 ////////
 
