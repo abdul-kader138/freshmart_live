@@ -1582,7 +1582,7 @@ $('#customer').on("blur",function(e){
 });
 
 
-//fire on keypress event
+//fire on barcode event
 
 $('#customer').keydown(function (e) {
     if (e.keyCode == 13) {
