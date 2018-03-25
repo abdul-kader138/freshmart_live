@@ -1538,50 +1538,11 @@ function key_pad() {
 
 }
 
-//$("#customer1").autocomplete({
-//    source: function (request, response) {
-//        $.ajax({
-//            url: "<?php //echo site_url('module=customers&view=suggestions'); ?>//",
-//            data: {
-//        <?php //echo $this->security->get_csrf_token_name(); ?>//:
-//        "<?php //echo $this->security->get_csrf_hash() ?>//", term
-//        :
-//        $("#customer").val()
-//    },
-//    dataType: "json",
-//    type: "get",
-//    success: function (data) {
-//        var id = Object.keys(data);
-//        console.log(id);
-////        var val = Object.Value(data);
-////        if(id){
-////        $("#customer").val(id)
-//        $("#customer_id_from_db").val(id);
-////        }
-//        response(data);
-//
-//    }
-//});
-//},
-//minLength: 2,
-//    error
-//:
-//function () {
-//    bootbox.alert('<?php //echo $this->lang->line('ajax_error'); ?>//');
-//    $('.ui-autocomplete-loading').removeClass("ui-autocomplete-loading");
-//}
-//})
-//;
 
 
-
-///////
+//fire on keypress event
 
 $('#customer').on("blur",function(e){
-//$("#customer").autocompl/ete({
-//    source: function (request, response) {
-
-
         $('#gmail_loading').show();
         var v = $(this).val();
         $.ajax({
@@ -1619,14 +1580,12 @@ $('#customer').on("blur",function(e){
 });
 
 });
-////////
 
-$('#scancode').keydown(function (e) {
+
+//fire on keypress event
+
+$('#customer').keydown(function (e) {
     if (e.keyCode == 13) {
-//$("#customer").autocompl/ete({
-//    source: function (request, response) {
-
-
         $('#gmail_loading').show();
         var v = $(this).val();
         $.ajax({
@@ -1664,6 +1623,9 @@ $('#scancode').keydown(function (e) {
 });
 }
 });
+
+
+// unbind event and stop refresh
 
 $('#customer').bind('keypress', function (e) {
     if (e.keyCode == 13) {
