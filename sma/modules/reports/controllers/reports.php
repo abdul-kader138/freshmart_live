@@ -811,7 +811,7 @@ class Reports extends MX_Controller
             // get All purchase Data
 
             $pp = "(SELECT mm.purchase_item_id, SUM( mm.received_qty ) purchasedQty from purchases p JOIN make_mrr mm on p.id = mm.purchase_id where
-                         mm.mrr_date  between '{$s_date}' and '{$e_date}'and mm.wh_id='{$warehouse_id}'
+                         mm.mrr_date  between '{$new_date}' and '{$newE_date}'and mm.wh_id='{$warehouse_id}'
                          group by mm.purchase_item_id ) PCosts";
 
             // get All Sales Data
@@ -864,13 +864,14 @@ class Reports extends MX_Controller
 
 
         // pull all main data
+//                (COALESCE( wProducts.quantity,0)+ COALESCE( adPro.removeQty, 0 )- COALESCE( adPro.addQty, 0 ) - COALESCE( SalesReturn.return_qty, 0 ) + COALESCE( trRemove.qty, 0 ) - COALESCE( trAdd.qty, 0 ) - COALESCE( PCosts.purchasedQty, 0 ) + COALESCE( PSales.soldQty, 0 ) ) as quantity,
         $this->load->library('datatables');
         if ($product) {
             $this->datatables->where('p.id', $product);
         }
         $this->datatables
             ->select("p.code, p.name, p.unit,
-                (COALESCE( wProducts.quantity,0)+ COALESCE( adPro.removeQty, 0 )- COALESCE( adPro.addQty, 0 ) - COALESCE( SalesReturn.return_qty, 0 ) + COALESCE( trRemove.qty, 0 ) - COALESCE( trAdd.qty, 0 ) - COALESCE( PCosts.purchasedQty, 0 ) + COALESCE( PSales.soldQty, 0 ) ) as quantity,
+                ((COALESCE( wProducts.quantity,0) + COALESCE( adPro.removeQty, 0 ) + COALESCE( trRemove.qty, 0 )  + COALESCE( PSales.soldQty, 0 )) - (COALESCE( adPro.addQty, 0 ) + COALESCE( SalesReturn.return_qty, 0 )  + COALESCE( trAdd.qty, 0 ) + COALESCE( PCosts.purchasedQty, 0 )) ) as quantity,
                 COALESCE( PCosts.purchasedQty, 0 ) as PurchasedQty,
                 COALESCE( PSales.soldQty, 0 ) as SoldQty,
                 COALESCE( SalesReturn.return_qty, 0 ) as SoldReturnQty,
@@ -879,10 +880,10 @@ class Reports extends MX_Controller
                 COALESCE( trRemove.qty, 0 ) as trRmvQty,
                 COALESCE( wProducts.quantity) as CloseingQnt", FALSE)
             ->from('products p', FALSE)
+            ->join($wps, 'p.id = wProducts.product_id', 'inner')
             ->join($sp, 'p.id = PSales.product_id', 'left')
             ->join($sr, 'p.id = SalesReturn.product_id', 'left')
             ->join($pp, 'p.id = PCosts.purchase_item_id', 'left')
-            ->join($wps, 'p.id = wProducts.product_id', 'inner')
             ->join($ad_qty, 'p.id = adPro.product_id', 'left')
             ->join($tr_add, 'p.id = trAdd.product_id', 'left')
             ->join($tr_remove, 'p.id = trRemove.product_id', 'left');
@@ -891,6 +892,7 @@ class Reports extends MX_Controller
             $this->datatables->where('p.id', $product);
         }
         echo $this->datatables->generate();
+//        echo $sp;
     }
 
     function getCP()

@@ -124,11 +124,8 @@
             <div style="clear:left;"></div>
 <!--            <input value="--><?php //echo $customer->name; ?><!--" id="customer" name="customer" class="customer"-->
             <input value="" id="customer" name="customer" class="customer"
-                   style="width:330px;float: left;" placeholder="Customer - Type 2 char for suggestions"
+                   style="width:370px;float: left;" placeholder="Enter Customer ID"
                    onClick="this.select();">
-            <a href="#" id="showCustomerModal" role="button" data-toggle="modal"
-               style="float: right;width:22px;height:22px; margin-top:-1px; border: 0;"><img
-                    src="assets/pos/images/plus-icon.png" alt="+"></a>
 
             <div style="clear:left;"></div>
             <input id="scancode" name="code" class="scancode"
@@ -1542,7 +1539,7 @@ function key_pad() {
 
 }
 
-$("#customer").autocomplete({
+$("#customer1").autocomplete({
     source: function (request, response) {
         $.ajax({
             url: "<?php echo site_url('module=customers&view=suggestions'); ?>",
@@ -1556,7 +1553,12 @@ $("#customer").autocomplete({
     type: "get",
     success: function (data) {
         var id = Object.keys(data);
-        $("#customer_id_from_db").val(id)
+        console.log(id);
+//        var val = Object.Value(data);
+//        if(id){
+//        $("#customer").val(id)
+        $("#customer_id_from_db").val(id);
+//        }
         response(data);
 
     }
@@ -1571,6 +1573,52 @@ function () {
 }
 })
 ;
+
+
+
+///////
+
+$('#customer').blur(function (e) {
+
+
+        $('#gmail_loading').show();
+        var v = $(this).val();
+        $.ajax({
+            type: "get",
+            async: false,
+            url: "<?php echo site_url('module=customers&view=suggestions'); ?>",
+            data: {
+        <?php echo $this->security->get_csrf_token_name(); ?>:
+        "<?php echo $this->security->get_csrf_hash() ?>", term
+    :
+        v
+    }
+    ,
+    dataType: "json",
+        success
+    :
+    function (data) {
+        var id = Object.keys(data);
+        if(data.length != 0 || data.length ==undefined){
+            $("#customer_id_from_db").val(id);
+            $("#customer").val(data[id]);
+        }else{
+            $("#customer_id_from_db").val("");
+            $("#customer").val("");
+        }
+
+    }
+
+    ,
+    error: function () {
+        $("#customer_id_from_db").val("");
+        $("#customer").val("");
+    }
+
+});
+
+});
+////////
 
 
 $('#scancode').keydown(function (e) {

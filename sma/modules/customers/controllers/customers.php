@@ -422,6 +422,7 @@ class Customers extends MX_Controller
     {
         $term = $this->input->get('term', TRUE);
 
+//        var_dump($term);
         if (strlen($term) < 2) break;
         $rows = $this->customers_model->getCustomerNames($term);
 
@@ -430,6 +431,7 @@ class Customers extends MX_Controller
             $json_array[$row->id] = $row->name;
         //array_push($json_array, $row->name);
 
+//        echo $term;
         echo json_encode($json_array);
     }
 

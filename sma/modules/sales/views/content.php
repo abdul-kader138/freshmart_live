@@ -31,7 +31,7 @@
              $(document).ready(function() {
 
                 $('#slData').dataTable( {
-					"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+					"aLengthMenu": [[10, 25, 50, 100, 500], [10, 25, 50, 100, 500]],
                     "aaSorting": [[ 0, "desc" ],[ 1, "desc" ]],
                     "iDisplayLength": <?php echo ROWS_PER_PAGE; ?>,
                     <?php if(BSTATESAVE) { echo '"bStateSave": true,'; } ?>

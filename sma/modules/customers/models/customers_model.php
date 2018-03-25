@@ -167,7 +167,7 @@ class Customers_model extends CI_Model
 	public function getCustomerNames($term)
     {
 	
-	   
+
    		$q = $this->db->query("SELECT id, name FROM customers WHERE name LIKE '%{$term}%' OR cf4 = '$term' Limit 1");
    		
 		if($q->num_rows() > 0) {

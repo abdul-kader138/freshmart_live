@@ -782,8 +782,8 @@ class Pos_model extends CI_Model
             if ($qnt[$i] <= $sales_Item_info->quantity && $qnt[$i] > 0) {
                 $total = $total + $price[$i] * $qnt[$i];
                 $wh_product_info = $this->getQtyByProductIDFromWh($product_id[$i], $sales_info->warehouse_id);
-                $nQTY = $prD->quantity - $qnt[$i];
-                $wh_qty = $wh_product_info->quantity - $qnt[$i];
+                $nQTY = $prD->quantity + $qnt[$i];
+                $wh_qty = $wh_product_info->quantity + $qnt[$i];
 
                 $return_obj = array(
                     "product_id" => $product_id[$i],
