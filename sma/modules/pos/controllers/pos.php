@@ -398,8 +398,8 @@ class Pos extends MX_Controller
             } else {
                 $current_customer=$this->pos_model->getCustomerById($customer_id);
                 $customer_credit_limits=$this->pos_model->getCustomerCreditById($customer_id);
-//                if($paid_by == 'Credit'){
-                if($paid_by == 'Credit' && $current_customer->cf3 == 'Regular'){
+                if($paid_by == 'Credit'){
+//                if($paid_by == 'Credit' && $current_customer->cf3 == 'Regular'){
 
                     //check for regular customer and its credit
                     if(!$customer_credit_limits || $customer_credit_limits->current_credit < $gTotal){
