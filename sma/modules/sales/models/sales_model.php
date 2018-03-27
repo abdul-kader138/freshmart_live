@@ -678,9 +678,10 @@ class Sales_model extends CI_Model
 	public function deleteInvoice($id)
 	    {
 	        $inv = $this->getInvoiceByID($id);
-//            var_dump($inv);
             $customer_credit_limits=$this->getCustomerCreditById($inv->customer_id);
+        if($inv->paid_by=='Credit'){
             $credit_amount=$customer_credit_limits->current_credit + $inv->total;
+        }
 	        $warehouse_id = $inv->warehouse_id;
 	        $items = $this->getAllInvoiceItems($id);
 	       
@@ -694,10 +695,12 @@ class Sales_model extends CI_Model
 	            $this->updateQuantity($product_id, $warehouse_id, $new_quantity);
                     $this->usQTY($product_id, $item->quantity);
 	        }
-	       
 	        if($this->db->delete('sale_items', array('sale_id' => $id)) && $this->db->delete('sales', array('id' => $id))) {
-                if($this->db->update('customers_credit_history',array('current_credit',$credit_amount),array('id',$customer_credit_limits->id))) return true;
-                else return false;
+                if($inv->paid_by == 'Credit') {
+                    if ($this->db->update('customers_credit_history', array('current_credit'=>$credit_amount), array('id'=> $customer_credit_limits->id))) return true;
+                    else return false;
+                }
+                return true;
 	        }
 	    return FALSE;
 	    }
@@ -728,7 +731,6 @@ class Sales_model extends CI_Model
 
     public function getCustomerCreditById($name)
     {
-        var_dump($name);
         $q = $this->db->get_where('customers_credit_history', array('customer_id' => $name, 'credit_start_date <= '=>date('Y-m-d'),'credit_end_date >='=>date('Y-m-d')), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
