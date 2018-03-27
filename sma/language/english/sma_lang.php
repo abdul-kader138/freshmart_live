@@ -303,6 +303,7 @@ $lang['edit_invoice'] 					= "Edit Invoice";
 $lang['product_reports'] 				= "Product Reports";
 $lang['purchase_reports'] 				= "Purchase Reports";
 $lang['sale_reports'] 					= "Sale Reports";
+$lang['credit_sale_reports'] 			= "Credit Sales Reports";
 $lang['sale_report_customer'] 			= "Sale Report (Customer Wise)";
 $lang['sale_margin_report'] 			= "Sale Margin Report";
 $lang['non_movement_product'] 			= "Non-movement Product Report";

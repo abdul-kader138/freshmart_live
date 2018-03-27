@@ -145,6 +145,22 @@ class Reports extends MX_Controller
         $this->load->view('commons/footer');
     }
 
+    function credit_sales()
+    {
+        $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+        $data['users'] = $this->reports_model->getAllUsers();
+        $data['warehouses'] = $this->reports_model->getAllWarehouses();
+        $data['customers'] = $this->reports_model->getAllCustomers();
+        $data['billers'] = $this->reports_model->getAllBillers();
+
+        $meta['page_title'] = $this->lang->line("credit_sale_reports");
+        $data['page_title'] = $this->lang->line("credit_sale_reports");
+        $this->load->view('commons/header', $meta);
+        $this->load->view('credit_sale', $data);
+        $this->load->view('commons/footer');
+    }
+
+
     function customer_sales()
     {
         $data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
@@ -362,6 +378,108 @@ class Reports extends MX_Controller
         echo $this->datatables->generate();
     }
 
+    function getCreditSales()
+    {
+//        $month = date("m", strtotime($start_date));
+        if ($this->input->get('user')) {
+            $user = $this->input->get('user');
+        } else {
+            $user = NULL;
+        }
+        if ($this->input->get('customer')) {
+            $customer = $this->input->get('customer');
+        } else {
+            $customer = NULL;
+        }
+        if ($this->input->get('biller')) {
+            $biller = $this->input->get('biller');
+        } else {
+            $biller = NULL;
+        }
+        if ($this->input->get('warehouse')) {
+            $warehouse = $this->input->get('warehouse');
+        } else {
+            $warehouse = NULL;
+        }
+        if ($this->input->get('reference_no')) {
+            $reference_no = $this->input->get('reference_no');
+        } else {
+            $reference_no = NULL;
+        }
+        if ($this->input->get('start_date')) {
+            $start_date = $this->input->get('start_date');
+        } else {
+            $start_date = NULL;
+        }
+        if ($this->input->get('end_date')) {
+            $end_date = $this->input->get('end_date');
+        } else {
+            $end_date = NULL;
+        }
+        if ($this->input->get('paid_by')) {
+            $paid_by = $this->input->get('paid_by');
+        } else {
+            $paid_by = NULL;
+        }
+        if ($start_date) {
+            $start_date = $this->ion_auth->fsd($start_date);
+            $end_date = $this->ion_auth->fsd($end_date);
+        }
+
+
+        $month=date("m", strtotime($start_date));
+        $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
+
+        if($customer) $sc = "(SELECT customer_id,current_credit,credit_limit FROM `customers_credit_history` where customer_id='{$customer}' and month='{$month}') sCredit";
+        else $sc = "(SELECT customer_id,current_credit,credit_limit FROM `customers_credit_history` where month='{$month}') sCredit";
+
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("sales.id as sid,date,biller_name, customer_name, sum(total) as gTotal,credit_limit,current_credit ", FALSE)
+            ->from('sales')
+            ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
+            ->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
+            ->join($sr, 'sales.id=sReturn.sales_id', 'left')
+            ->join($sc, 'sales.customer_id=sCredit.customer_id', 'left')
+            ->group_by('sales.customer_id');
+
+
+        if ($user) {
+            $this->datatables->like('sales.user', $user);
+        }
+        //if($name) { $this->datatables->like('sale_items.product_name', $name, 'both'); }
+        if ($biller) {
+            $this->datatables->like('sales.biller_id', $biller);
+        }
+        if ($customer) {
+            $this->datatables->like('sales.customer_id', $customer);
+        }
+        if ($warehouse) {
+            $this->datatables->like('sales.warehouse_id', $warehouse);
+        }
+//        if ($paid_by) {
+            $this->datatables->where('sales.paid_by = ', 'Credit');
+//        }
+        if ($reference_no) {
+            $this->datatables->like('sales.reference_no', $reference_no, 'both');
+        }
+        if ($start_date) {
+            $this->datatables->where('sales.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+        }
+
+        /*$this->datatables->add_column("Actions",
+            "<center><a href='#' onClick=\"MyWindow=window.open('index.php?module=sales&view=view_invoice&id=$1', 'MyWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=1000,height=600'); return false;\" title='".$this->lang->line("view_invoice")."' class='tip'><i class='icon-fullscreen'></i></a>
+            <a href='index.php?module=sales&view=pdf&id=$1' title='".$this->lang->line("download_pdf")."' class='tip'><i class='icon-file'></i></a>
+            <a href='index.php?module=sales&view=email_invoice&id=$1' title='".$this->lang->line("email_invoice")."' class='tip'><i class='icon-envelope'></i></a>
+            <a href='index.php?module=sales&amp;view=edit&amp;id=$1' title='".$this->lang->line("edit_invoice")."' class='tip'><i class='icon-edit'></i></a>
+            <a href='index.php?module=sales&amp;view=delete&amp;id=$1' onClick=\"return confirm('". $this->lang->line('alert_x_invoice') ."')\" title='".$this->lang->line("delete_invoice")."' class='tip'><i class='icon-trash'></i></a></center>", "sid");*/
+
+        $this->datatables->unset_column('sid');
+
+//          echo $sc;
+        echo $this->datatables->generate();
+    }
+
 
     function getNonMovementProductByCategory()
     {
@@ -397,8 +515,8 @@ class Reports extends MX_Controller
         $this->load->library('datatables');
         $this->datatables
             ->select("PCosts.c_name,PCosts.code,PCosts.name,PCosts.qty,PCosts.unit,PCosts.price,PCosts.cost,PCosts.rate_margin", FALSE)
-        ->from('products')
-        ->join($getData, 'products.code=PCosts.code', 'right');
+            ->from('products')
+            ->join($getData, 'products.code=PCosts.code', 'right');
         echo $this->datatables->generate();
     }
 

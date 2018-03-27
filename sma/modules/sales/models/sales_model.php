@@ -678,7 +678,7 @@ class Sales_model extends CI_Model
 	public function deleteInvoice($id)
 	    {
 	        $inv = $this->getInvoiceByID($id);
-            $customer_credit_limits=$this->getCustomerCreditById($inv->customer_id);
+            $customer_credit_limits=$this->getCustomerCreditById($inv->customer_id,$inv->date);
         if($inv->paid_by=='Credit'){
             $credit_amount=$customer_credit_limits->current_credit + $inv->total;
         }
@@ -729,9 +729,10 @@ class Sales_model extends CI_Model
 		}
     }
 
-    public function getCustomerCreditById($name)
+    public function getCustomerCreditById($name,$date)
     {
-        $q = $this->db->get_where('customers_credit_history', array('customer_id' => $name, 'credit_start_date <= '=>date('Y-m-d'),'credit_end_date >='=>date('Y-m-d')), 1);
+        $month=date("m", strtotime($date));
+        $q = $this->db->get_where('customers_credit_history', array('customer_id' => $name, 'month'=>$month), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }

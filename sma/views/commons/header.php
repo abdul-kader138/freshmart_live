@@ -441,6 +441,9 @@
            </li>
             <li class="divider"></li>
             <li>
+                <a href="<?php echo base_url(); ?>index.php?module=reports&view=credit_sales"><?php echo $this->lang->line('credit_sale_reports'); ?></a>
+            </li>
+            <li>
                 <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales_margin">Sales Margin Report</a>
             </li>
 

@@ -188,7 +188,8 @@ class Pos_model extends CI_Model
 
     public function getCustomerCreditById($name)
     {
-        $q = $this->db->get_where('customers_credit_history', array('customer_id' => $name, 'credit_start_date <= '=>date('Y-m-d'),'credit_end_date >='=>date('Y-m-d')), 1);
+        $month = date('m');
+        $q = $this->db->get_where('customers_credit_history', array('month' => $month,'customer_id'=>$name), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -741,9 +742,9 @@ class Pos_model extends CI_Model
             foreach ($items as &$var) {
                 $var = array_merge($addOn, $var);
             }
-
+            $month=date('m');
             if($credit_obj){
-                if($this->db->update('customers_credit_history',array('current_credit'=>$credit_obj['current_credit'],'updated_by'=>USER_NAME,'updated_on'=>date('Y-m-d H:i:s')),array('customer_id'=>$credit_obj['id']))){
+                if($this->db->update('customers_credit_history',array('current_credit'=>$credit_obj['current_credit'],'updated_by'=>USER_NAME,'updated_on'=>date('Y-m-d H:i:s')),array('customer_id'=>$credit_obj['id'],'month'=>$month))){
                     if ($this->db->insert_batch('sale_items', $items)) {
                         if ($sid) {
                             $this->deleteSale($sid);

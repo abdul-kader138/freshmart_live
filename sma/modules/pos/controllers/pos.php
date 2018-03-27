@@ -417,7 +417,7 @@ class Pos extends MX_Controller
 					$getDetails=$this->pos_model->getProductByIdAndWH($item['product_id'],$warehouse_id);
 				     if($getDetails->quantity<$item['quantity']){
                       $this->session->set_flashdata('message', "Item(".$item['product_name'].") qty is not available at warehouse");
-                      redirect("module=pos", 'refresh');
+                      redirect("module=pnos", 'refresh');
 						}
 					}
 //                if ($saleID = $this->pos_model->addSale($saleDetails, $items, $warehouse_id, $did,$credit_obj)) {

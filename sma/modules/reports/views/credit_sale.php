@@ -103,7 +103,7 @@ if ($this->input->post('submit')) {
             "iDisplayLength": <?php echo ROWS_PER_PAGE; ?>,
             'bProcessing': true,
             'bServerSide': true,
-            'sAjaxSource': '<?php echo base_url(); ?>index.php?module=reports&view=getSales<?php
+            'sAjaxSource': '<?php echo base_url(); ?>index.php?module=reports&view=getCreditSales<?php
 					if($this->input->post('submit')) { echo $v; } ?>',
             'fnServerData': function (sSource, aoData, fnCallback, fnFooterCallback) {
                 aoData.push({
@@ -125,19 +125,19 @@ if ($this->input->post('submit')) {
                     {
                         "sExtends": "csv",
                         "sFileName": "<?php echo $this->lang->line("sales"); ?>.csv",
-                        "mColumns": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        "mColumns": [0, 1, 2, 3, 4, 5]
                     },
                     {
                         "sExtends": "pdf",
                         "sFileName": "<?php echo $this->lang->line("sales"); ?>.pdf",
                         "sPdfOrientation": "landscape",
-                        "mColumns": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        "mColumns": [0, 1, 2, 3, 4, 5]
                     },
                     "print"
                 ]
             },
             "aoColumns": [
-                {"mRender": format_date}, null, null, null, {"bSearchable": false}, {"mRender": currencyFormate}, {"mRender": currencyFormate}, {"mRender": currencyFormate}, null, {"mRender": currencyFormate}, {"mRender": currencyFormate}, {"mRender": currencyFormate}
+                {"mRender": format_date}, null, {"bSearchable": false}, null,null,null
             ],
 
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
@@ -150,19 +150,11 @@ if ($this->input->post('submit')) {
                 for (var i = 0; i < aaData.length; i++) {
                     tax_total += parseFloat(aaData[aiDisplay[i]][6]);
                     tax2_total += parseFloat(aaData[aiDisplay[i]][7]);
-                    if (aaData[aiDisplay[i]][5] != null || aaData[aiDisplay[i]][5] != undefined) row_total += parseFloat(aaData[aiDisplay[i]][5]);
-                    if (aaData[aiDisplay[i]][9] != null || aaData[aiDisplay[i]][9] != undefined)return_total += parseFloat(aaData[aiDisplay[i]][9]);
-                    if (aaData[aiDisplay[i]][10] != null || aaData[aiDisplay[i]][10] != undefined) discount_total += parseFloat(aaData[aiDisplay[i]][10]);
-                    if (aaData[aiDisplay[i]][11] != null || aaData[aiDisplay[i]][11] != undefined) gross_total += parseFloat(aaData[aiDisplay[i]][11]);
+                    if (aaData[aiDisplay[i]][3] != null || aaData[aiDisplay[i]][3] != undefined) row_total += parseFloat(aaData[aiDisplay[i]][3]);
                 }
 
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[5].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
-                nCells[6].innerHTML = currencyFormate(parseFloat(tax_total).toFixed(2));
-                nCells[7].innerHTML = currencyFormate(parseFloat(tax2_total).toFixed(2));
-                nCells[9].innerHTML = currencyFormate(parseFloat(return_total).toFixed(2));
-                nCells[10].innerHTML = currencyFormate(parseFloat(discount_total).toFixed(2));
-                nCells[11].innerHTML = currencyFormate(parseFloat(gross_total).toFixed(2));
+                nCells[3].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
             }
 
         }).columnFilter({
@@ -172,8 +164,8 @@ if ($this->input->post('submit')) {
                 {type: "text", bRegex: true},
                 {type: "text", bRegex: true},
                 {type: "text", bRegex: true},
-                null, null, null, null, null, null
-            ]
+                null, null
+        ]
         });
 
     });
@@ -182,37 +174,15 @@ if ($this->input->post('submit')) {
 
 <link href="<?php echo $this->config->base_url(); ?>assets/css/datepicker.css" rel="stylesheet">
 
-<h3 class="title"><?php echo $page_title; ?><?php if ($this->input->post('start_date')) {
-        echo" # ". $this->input->post('start_date') . " - " . $this->input->post('end_date');}?> <a href="#"
+<h3 class="title"><?php echo $page_title; ?> <?php if ($this->input->post('start_date')) {
+        echo" # ". $this->input->post('start_date') . " - " . $this->input->post('end_date');}?><a href="#"
                                                 class="btn btn-mini toggle_form"><?php echo $this->lang->line("show_hide"); ?></a>
 </h3>
 
 <div class="form">
     <p>Please customise the report below.</p>
     <?php $attrib = array('class' => 'form-horizontal');
-    echo form_open("module=reports&view=sales", $attrib); ?>
-    <div class="control-group">
-        <label class="control-label" for="reference_no"><?php echo $this->lang->line("reference_no"); ?></label>
-
-        <div
-            class="controls"> <?php echo form_input('reference_no', (isset($_POST['reference_no']) ? $_POST['reference_no'] : ""), 'class="span4 tip" title="Filter Sales by Reference No" id="reference_no"'); ?>
-        </div>
-    </div>
-    <!--<div class="control-group">
-  <label class="control-label" for="name"><?php echo $this->lang->line("product_name"); ?></label>
-  <div class="controls"> <?php echo form_input('name', (isset($_POST['name']) ? $_POST['name'] : ""), 'class="span4" id="name"'); ?>
-  </div>
-</div>-->
-    <div class="control-group">
-        <label class="control-label" for="user"><?php echo $this->lang->line("created_by"); ?></label>
-
-        <div class="controls"> <?php
-            $us[""] = "";
-            foreach ($users as $user) {
-                $us[$user->id] = $user->first_name . " " . $user->last_name;
-            }
-            echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="span4" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("user") . '"');  ?> </div>
-    </div>
+    echo form_open("module=reports&view=credit_sales", $attrib); ?>
     <div class="control-group">
         <label class="control-label" for="customer"><?php echo $this->lang->line("customer"); ?></label>
 
@@ -291,41 +261,30 @@ if ($this->input->post('submit')) {
         <thead>
         <tr>
             <th><?php echo $this->lang->line("date"); ?></th>
-            <th><?php echo $this->lang->line("reference_no"); ?></th>
             <th><?php echo $this->lang->line("biller"); ?></th>
             <th><?php echo $this->lang->line("customer"); ?></th>
-            <th><?php echo $this->lang->line("product_qty"); ?></th>
 
             <th><?php echo $this->lang->line("total"); ?></th>
-            <th><?php echo $this->lang->line("tax1"); ?></th>
-            <th><?php echo $this->lang->line("tax2"); ?></th>
-            <th>Return Ref</th>
-            <th>Return Amount</th>
-            <th>Discount Amount</th>
-            <th>Gross Total</th>
+            <th>Credit Limit</th>
+            <th>Current Credit</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td colspan="8" class="dataTables_empty">Loading data from server</td>
+            <td colspan="6" class="dataTables_empty">Loading data from server</td>
         </tr>
 
         </tbody>
         <tfoot>
 
         <tr>
-            <th>[<?php echo $this->lang->line("date"); ?>]</th>
-            <th>[<?php echo $this->lang->line("reference_no"); ?>]</th>
-            <th>[<?php echo $this->lang->line("biller"); ?>]</th>
-            <th>[<?php echo $this->lang->line("customer"); ?>]</th>
-            <th><?php echo $this->lang->line("product_qty"); ?></th>
+            <th><?php echo $this->lang->line("date"); ?></th>
+            <th><?php echo $this->lang->line("biller"); ?></th>
+            <th><?php echo $this->lang->line("customer"); ?></th>
+
             <th><?php echo $this->lang->line("total"); ?></th>
-            <th><?php echo $this->lang->line("tax1"); ?></th>
-            <th><?php echo $this->lang->line("tax2"); ?></th>
-            <th></th>
-            <th>Return Amount</th>
-            <th>Discount Amount</th>
-            <th>Gross Total</th>
+            <th>Credit Limit</th>
+            <th>Current Credit</th>
         </tr>
         </tfoot>
     </table>
