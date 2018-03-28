@@ -413,6 +413,7 @@ class Pos extends MX_Controller
                         );
                     }
                 }
+
 				foreach($items as $item){
 					$getDetails=$this->pos_model->getProductByIdAndWH($item['product_id'],$warehouse_id);
 				     if($getDetails->quantity<$item['quantity']){
