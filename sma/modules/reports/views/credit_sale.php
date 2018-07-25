@@ -2,9 +2,6 @@
 if ($this->input->post('submit')) {
 
     $v = "";
-    /*if($this->input->post('name')){
-         $v .= "&name=".$this->input->post('name');
-     }*/
     if ($this->input->post('reference_no')) {
         $v .= "&reference_no=" . $this->input->post('reference_no');
     }
@@ -124,20 +121,20 @@ if ($this->input->post('submit')) {
                 "aButtons": [
                     {
                         "sExtends": "csv",
-                        "sFileName": "<?php echo $this->lang->line("sales"); ?>.csv",
-                        "mColumns": [0, 1, 2, 3, 4, 5]
+                        "sFileName": "credit_sales.csv",
+                        "mColumns": [0, 1, 2, 3, 4,5]
                     },
                     {
                         "sExtends": "pdf",
-                        "sFileName": "<?php echo $this->lang->line("sales"); ?>.pdf",
+                        "sFileName": "credit_sales.pdf",
                         "sPdfOrientation": "landscape",
-                        "mColumns": [0, 1, 2, 3, 4, 5]
+                        "mColumns": [0, 1, 2, 3, 4,5]
                     },
                     "print"
                 ]
             },
             "aoColumns": [
-                {"mRender": format_date}, null, {"bSearchable": false}, null,null,null
+                null, null, {"bSearchable": false}, null,null,null
             ],
 
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
@@ -147,14 +144,14 @@ if ($this->input->post('submit')) {
                 var return_total = 0.0;
                 var discount_total = 0.0;
                 var gross_total = 0.0;
-                for (var i = 0; i < aaData.length; i++) {
-                    tax_total += parseFloat(aaData[aiDisplay[i]][6]);
-                    tax2_total += parseFloat(aaData[aiDisplay[i]][7]);
-                    if (aaData[aiDisplay[i]][3] != null || aaData[aiDisplay[i]][3] != undefined) row_total += parseFloat(aaData[aiDisplay[i]][3]);
-                }
-
-                var nCells = nRow.getElementsByTagName('th');
-                nCells[3].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
+//                for (var i = 0; i < aaData.length; i++) {
+//                    tax_total += parseFloat(aaData[aiDisplay[i]][6]);
+//                    tax2_total += parseFloat(aaData[aiDisplay[i]][7]);
+//                    if (aaData[aiDisplay[i]][3] != null || aaData[aiDisplay[i]][3] != undefined) row_total += parseFloat(aaData[aiDisplay[i]][3]);
+//                }
+//
+//                var nCells = nRow.getElementsByTagName('th');
+//                nCells[3].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
             }
 
         }).columnFilter({
@@ -163,8 +160,9 @@ if ($this->input->post('submit')) {
                 {type: "text", bRegex: true},
                 {type: "text", bRegex: true},
                 {type: "text", bRegex: true},
-                {type: "text", bRegex: true},
-                null, null
+                null,
+                null,
+                null
         ]
         });
 
@@ -231,15 +229,8 @@ if ($this->input->post('submit')) {
 
         <div class="controls">
             <select name="paid_by" id="paid_by">
-                <option value="">Select Payment Mode</option>
-                <option value="cash" <?php if ($_POST['paid_by'] == 'cash') echo "selected"; ?>>Cash</option>
-                <option value="CC" <?php if ($_POST['paid_by'] == 'CC') echo "selected"; ?>>Cards</option>
-                <option value="CC_cash" <?php if ($_POST['paid_by'] == 'CC_cash') echo "selected"; ?>>Card & Cash
-                </option>
                 <option
-                    value="Cheque" <?php if ($_POST['paid_by'] == 'Cheque') echo "selected"; ?>><?php echo $this->lang->line("cheque"); ?></option>
-                <option
-                    value="Credit" <?php if ($_POST['paid_by'] == 'Credit') echo "selected"; ?>><?php echo $this->lang->line("credit"); ?></option>
+                    value="Credit">Credit</option>
             </select>
         </div>
     </div>
@@ -260,13 +251,12 @@ if ($this->input->post('submit')) {
            style="margin-bottom: 5px;">
         <thead>
         <tr>
-            <th><?php echo $this->lang->line("date"); ?></th>
             <th><?php echo $this->lang->line("biller"); ?></th>
+            <th>Card Number</th>
             <th><?php echo $this->lang->line("customer"); ?></th>
-
+            <th>No Of Transaction</th>
             <th><?php echo $this->lang->line("total"); ?></th>
             <th>Credit Limit</th>
-            <th>Current Credit</th>
         </tr>
         </thead>
         <tbody>
@@ -278,13 +268,12 @@ if ($this->input->post('submit')) {
         <tfoot>
 
         <tr>
-            <th><?php echo $this->lang->line("date"); ?></th>
             <th><?php echo $this->lang->line("biller"); ?></th>
+            <th>Card Number</th>
             <th><?php echo $this->lang->line("customer"); ?></th>
-
+            <th>No Of Transaction</th>
             <th><?php echo $this->lang->line("total"); ?></th>
             <th>Credit Limit</th>
-            <th>Current Credit</th>
         </tr>
         </tfoot>
     </table>

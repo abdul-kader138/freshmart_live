@@ -395,7 +395,7 @@ class Products extends MX_Controller
                 ->from('warehouses_products')
                 ->join('products', 'products.id=warehouses_products.product_id', 'left')
                 ->where('warehouses_products.warehouse_id', $warehouse_id)
-             //   ->where('warehouses_products.quantity <=', 0)
+                //   ->where('warehouses_products.quantity <=', 0)
                 ->group_by("products.id")
                 ->add_column("Actions",
                     "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>
@@ -412,7 +412,7 @@ class Products extends MX_Controller
                 ->from('warehouses_products')
                 ->join('products', 'products.id=warehouses_products.product_id', 'left')
                 ->where('warehouses_products.warehouse_id', $warehouse_id)
-               // ->where('warehouses_products.quantity !=', 0)
+                // ->where('warehouses_products.quantity !=', 0)
                 ->group_by("products.id")
                 ->add_column("Actions",
                     "<center><a id='$4 - $3' href='index.php?module=products&view=gen_barcode&code=$3&height=200' title='" . $this->lang->line("view_barcode") . "' class='barcode tip'><i class='icon-barcode'></i></a>
@@ -954,7 +954,7 @@ class Products extends MX_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('code', 'name', 'category_code', 'unit', 'size', 'cost', 'price', 'alert_quantity', 'tax_rate', 'cf2', 'cf1');
+                $keys = array('code', 'name', 'category_code', 'unit', 'size', 'cost', 'price', 'alert_quantity', 'tax_rate', 'cf4');
 
                 $final = array();
 
@@ -978,8 +978,8 @@ class Products extends MX_Controller
                         $pr_aq[] = $csv_pr['alert_quantity'];
                         $tax_details = $this->products_model->getTaxRateByName($csv_pr['tax_rate']);
                         $pr_tax[] = $tax_details->id ? $tax_details->id : (DEFAULT_TAX ? DEFAULT_TAX : NULL);
-                        $pr_cf2[] = $csv_pr['cf2'];
-                        $pr_cf1[] = $csv_pr['cf1'];
+                        $pr_cf2[] = $csv_pr['cf4'];
+                        //$pr_cf1[] = $csv_pr['cf1'];
 
                     } else {
                         $this->session->set_flashdata('message', $this->lang->line("check_category_code") . " (" . $csv_pr['category_code'] . "). " . $this->lang->line("category_code_x_exist") . " " . $this->lang->line("line_no") . " " . $rw);
@@ -990,10 +990,10 @@ class Products extends MX_Controller
                 }
             }
 
-            $ikeys = array('code', 'name', 'category_id', 'unit', 'size', 'cost', 'price', 'alert_quantity', 'tax_rate', 'cf2', 'cf1');
+            $ikeys = array('code', 'name', 'category_id', 'unit', 'size', 'cost', 'price', 'alert_quantity', 'tax_rate', 'cf4');
 
             $items = array();
-            foreach (array_map(null, $pr_code, $pr_name, $pr_cat, $pr_unit, $pr_size, $pr_cost, $pr_price, $pr_aq, $pr_tax, $pr_cf2, $pr_cf1) as $ikey => $value) {
+            foreach (array_map(null, $pr_code, $pr_name, $pr_cat, $pr_unit, $pr_size, $pr_cost, $pr_price, $pr_aq, $pr_tax, $pr_cf2) as $ikey => $value) {
                 $items[] = array_combine($ikeys, $value);
             }
 
@@ -1074,6 +1074,8 @@ class Products extends MX_Controller
                 }
                 $titles = array_shift($arrResult);
 
+                //  $keys = array('code', 'name', 'cost', 'price','alert_quantity','quantity');
+
 //                $keys = array('code', 'name', 'cost', 'price','alert_quantity','quantity');
                 $keys = array('code', 'category_id');
 
@@ -1097,10 +1099,9 @@ class Products extends MX_Controller
         }
 
         if ($this->form_validation->run() == true && isset($_POST['submit'])) {
-            var_dump($final);
-//            $this->products_model->updatePrice($final);
+            $this->products_model->updatePrice($final);
             $this->session->set_flashdata('success_message', $this->lang->line("price_updated"));
-//            redirect('module=products', 'refresh');
+            redirect('module=products', 'refresh');
         } else {
 
             $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
@@ -1122,6 +1123,99 @@ class Products extends MX_Controller
     }
 
 
+    function update_alert_quantity()
+    {
+        $groups = array('admin', 'owner');
+        if (!$this->ion_auth->in_group($groups)) {
+            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+            redirect('module=products', 'refresh');
+        }
+
+        $this->form_validation->set_rules('userfile', $this->lang->line("upload_file"), 'xss_clean');
+
+        if ($this->form_validation->run() == true) {
+
+            if (DEMO) {
+                $this->session->set_flashdata('message', $this->lang->line("disabled_in_demo"));
+                redirect('module=home', 'refresh');
+            }
+
+            if (isset($_FILES["userfile"])) /*if($_FILES['userfile']['size'] > 0)*/ {
+
+                $this->load->library('upload_photo');
+
+                $config['upload_path'] = 'assets/uploads/csv/';
+                $config['allowed_types'] = 'csv';
+                $config['max_size'] = '980';
+                $config['overwrite'] = TRUE;
+
+                $this->upload_photo->initialize($config);
+
+                if (!$this->upload_photo->do_upload()) {
+
+                    $error = $this->upload_photo->display_errors();
+                    $this->session->set_flashdata('message', $error);
+                    redirect("module=products&view=update_alert_quantity", 'refresh');
+                }
+
+                $csv = $this->upload_photo->file_name;
+
+                $arrResult = array();
+                $handle = fopen("assets/uploads/csv/" . $csv, "r");
+                if ($handle) {
+                    while (($row = fgetcsv($handle, 15000, ",")) !== FALSE) {
+                        $arrResult[] = $row;
+                    }
+                    fclose($handle);
+                }
+                $titles = array_shift($arrResult);
+
+//                $keys = array('code', 'name', 'cost', 'price','alert_quantity','quantity');
+                $keys = array('code', 'alert_quantity');
+
+                $final = array();
+
+                foreach ($arrResult as $key => $value) {
+                    $final[] = array_combine($keys, $value);
+                }
+                $rw = 2;
+                foreach ($final as $csv_pr) {
+                    if (!$this->products_model->getProductByCode($csv_pr['code'])) {
+                        $this->session->set_flashdata('message', $this->lang->line("check_product_code") . " (" . $csv_pr['code'] . "). " . $this->lang->line("code_x_exist") . " " . $this->lang->line("line_no") . " " . $rw);
+                        redirect("module=products&view=update_alert_quantity", 'refresh');
+                    }
+                    $rw++;
+                }
+            }
+
+            $final = $this->mres($final);
+            //$data['final'] = $final;
+        }
+
+        if ($this->form_validation->run() == true && isset($_POST['submit'])) {
+            $this->products_model->updateAlertQuantity($final);
+            $this->session->set_flashdata('success_message', "Alert Quantity updated Successfully");
+            redirect('module=products', 'refresh');
+        } else {
+
+            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
+
+            $data['userfile'] = array('name' => 'userfile',
+                'id' => 'userfile',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('userfile')
+            );
+
+
+            $meta['page_title'] = $this->lang->line("update_alert_csv");
+            $data['page_title'] = $this->lang->line("update_alert_csv");
+            $this->load->view('commons/header', $meta);
+            $this->load->view('update_alert_quantity', $data);
+            $this->load->view('commons/footer');
+
+        }
+    }
 
 
     function update_warehouse_qty()
@@ -1218,100 +1312,6 @@ class Products extends MX_Controller
     }
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------- */
-    function update_alert_quantity()
-    {
-        $groups = array('admin', 'owner');
-        if (!$this->ion_auth->in_group($groups)) {
-            $this->session->set_flashdata('message', $this->lang->line("access_denied"));
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-            redirect('module=products', 'refresh');
-        }
-
-        $this->form_validation->set_rules('userfile', $this->lang->line("upload_file"), 'xss_clean');
-
-        if ($this->form_validation->run() == true) {
-
-            if (DEMO) {
-                $this->session->set_flashdata('message', $this->lang->line("disabled_in_demo"));
-                redirect('module=home', 'refresh');
-            }
-
-            if (isset($_FILES["userfile"])) /*if($_FILES['userfile']['size'] > 0)*/ {
-
-                $this->load->library('upload_photo');
-
-                $config['upload_path'] = 'assets/uploads/csv/';
-                $config['allowed_types'] = 'csv';
-                $config['max_size'] = '980';
-                $config['overwrite'] = TRUE;
-
-                $this->upload_photo->initialize($config);
-
-                if (!$this->upload_photo->do_upload()) {
-
-                    $error = $this->upload_photo->display_errors();
-                    $this->session->set_flashdata('message', $error);
-                    redirect("module=products&view=update_alert_quantity", 'refresh');
-                }
-
-                $csv = $this->upload_photo->file_name;
-
-                $arrResult = array();
-                $handle = fopen("assets/uploads/csv/" . $csv, "r");
-                if ($handle) {
-                    while (($row = fgetcsv($handle, 15000, ",")) !== FALSE) {
-                        $arrResult[] = $row;
-                    }
-                    fclose($handle);
-                }
-                $titles = array_shift($arrResult);
-
-//                $keys = array('code', 'name', 'cost', 'price','alert_quantity','quantity');
-                $keys = array('code', 'alert_quantity');
-
-                $final = array();
-
-                foreach ($arrResult as $key => $value) {
-                    $final[] = array_combine($keys, $value);
-                }
-                $rw = 2;
-                foreach ($final as $csv_pr) {
-                    if (!$this->products_model->getProductByCode($csv_pr['code'])) {
-                        $this->session->set_flashdata('message', $this->lang->line("check_product_code") . " (" . $csv_pr['code'] . "). " . $this->lang->line("code_x_exist") . " " . $this->lang->line("line_no") . " " . $rw);
-                        redirect("module=products&view=update_alert_quantity", 'refresh');
-                    }
-                    $rw++;
-                }
-            }
-
-            $final = $this->mres($final);
-            //$data['final'] = $final;
-        }
-
-        if ($this->form_validation->run() == true && isset($_POST['submit'])) {
-            $this->products_model->updateAlertQuantity($final);
-            $this->session->set_flashdata('success_message', "Alert Quantity updated Successfully");
-            redirect('module=products', 'refresh');
-        } else {
-
-            $data['message'] = (validation_errors() ? validation_errors() : $this->session->flashdata('message'));
-
-            $data['userfile'] = array('name' => 'userfile',
-                'id' => 'userfile',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('userfile')
-            );
-
-
-            $meta['page_title'] = $this->lang->line("update_alert_csv");
-            $data['page_title'] = $this->lang->line("update_alert_csv");
-            $this->load->view('commons/header', $meta);
-            $this->load->view('update_alert_quantity', $data);
-            $this->load->view('commons/footer');
-
-        }
-    }
-
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------- */
 

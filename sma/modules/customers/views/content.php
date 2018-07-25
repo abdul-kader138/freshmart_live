@@ -88,7 +88,7 @@
             <th><?php echo $this->lang->line("email_address"); ?></th>
 			<th>Card Number</th>
             <th>Discount Set</th>
-            <th>Duscount Amount</th>
+            <th>Credit Limit</th>
             <th style="width:45px;"><?php echo $this->lang->line("actions"); ?></th>
 		</tr>
         </thead>
@@ -105,7 +105,7 @@
             <th><?php echo $this->lang->line("email_address"); ?></th>
 			<th>Card Number</th>
             <th>Discount Set</th>
-            <th>Duscount Amount</th>
+            <th>Credit Limit</th>
             <th style="width:45px;"><?php echo $this->lang->line("actions"); ?></th>
 		</tr>
         </tfoot>

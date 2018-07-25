@@ -821,6 +821,7 @@ $(document).ready(function () {
             dataType: "html",
             success: function (data) {
                 ts_data = data;
+                console.log(data);
             },
             error: function () {
                 bootbox.alert('<?php echo $this->lang->line('request_failed'); ?>');

@@ -156,7 +156,19 @@ $(function() {
   <label class="control-label" for="phone"><?php echo $this->lang->line("phone"); ?></label>
   <div class="controls"> <?php echo form_input($phone);?>
   </div>
-</div> 
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="phone">Designation</label>
+    <div class="controls"> <input type="text" name="designation" value="<?php echo $customer->designation; ?>" class="span4" data-error="<?php echo 'Designation is required'.' '.$this->lang->line("is_required"); ?>" />
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="phone">Department</label>
+    <div class="controls"> <input type="text" name="department" value="<?php echo $customer->department; ?>" class="span4"  data-error="<?php echo 'Department is required'.' '.$this->lang->line("is_required"); ?>" />
+    </div>
+</div>
 <div class="control-group">
   <label class="control-label" for="company"><?php echo $this->lang->line("company"); ?></label>
   <div class="controls"> <?php echo form_input($company);?>
@@ -187,8 +199,12 @@ $(function() {
   <label class="control-label" for="country"><?php echo $this->lang->line("country"); ?></label>
   <div class="controls"> <?php echo form_input($country);?>
   </div>
-</div> 
-
+</div>
+<div class="control-group">
+    <label class="control-label" for="credit">Credit Limit</label>
+    <div class="controls"> <input type="text" name="credit_limit" value="<?php echo $customer->credit_limit; ?>" class="span4" required="required" data-error="<?php echo 'Credit Limit is required'.' '.$this->lang->line("is_required"); ?>" />
+    </div>
+</div>
 
 <div class="control-group">
   <label class="control-label" for="cf1">Discount Set As</label>

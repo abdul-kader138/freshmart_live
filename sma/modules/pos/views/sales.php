@@ -19,6 +19,11 @@
         <td style="border-bottom: 1px solid #DDD;"><h4><?php echo $this->lang->line('cc_sale'); ?>:</h4></td>
         <td style="text-align:right;border-bottom: 1px solid #DDD;"><h4><span><?php echo ($ccsales + $cc_card); ?></span></h4></td>
     </tr>
+    <tr>
+        <td style="border-bottom: 1px solid #DDD;"><h4>Credit Sale:</h4></td>
+        <td style="text-align:right;border-bottom: 1px solid #DDD;"><h4><span><?php echo ($credit_sale); ?></span></h4></td>
+    </tr>
+
 
     <tr>
         <td style="border-bottom: 1px solid #DDD;"><h4><?php echo $this->lang->line('sale_return'); ?>:</h4></td>

@@ -189,7 +189,7 @@ class Pos_model extends CI_Model
     public function getCustomerCreditById($name)
     {
         $month = date('m');
-        $q = $this->db->get_where('customers_credit_history', array('month' => $month,'customer_id'=>$name), 1);
+        $q = $this->db->get_where('customers_credit_history', array('month' => $month, 'customer_id' => $name), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -206,7 +206,6 @@ class Pos_model extends CI_Model
 
         return FALSE;
     }
-
 
 
     public function getAllBillers()
@@ -557,7 +556,7 @@ class Pos_model extends CI_Model
 
     public function getAllInvoiceItemsForReturn($sale_id)
     {
-        $q = $this->db->get_where('sale_items', array('sale_id' => $sale_id, 'return_qnt'=> 0 ));
+        $q = $this->db->get_where('sale_items', array('sale_id' => $sale_id, 'return_qnt' => 0));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
@@ -694,7 +693,7 @@ class Pos_model extends CI_Model
         }
     }
 
-    public function addSale($saleDetails = array(), $items = array(), $warehouse_id, $sid = NULL,$credit_obj)
+    public function addSale($saleDetails = array(), $items = array(), $warehouse_id, $sid = NULL)
     {
 
         // sale data
@@ -727,7 +726,6 @@ class Pos_model extends CI_Model
         );
 
 
-
         if ($this->db->insert('sales', $saleData)) {
             $sale_id = $this->db->insert_id();
 
@@ -742,23 +740,11 @@ class Pos_model extends CI_Model
             foreach ($items as &$var) {
                 $var = array_merge($addOn, $var);
             }
-            $month=date('m');
-            if($credit_obj){
-                if($this->db->update('customers_credit_history',array('current_credit'=>$credit_obj['current_credit'],'updated_by'=>USER_NAME,'updated_on'=>date('Y-m-d H:i:s')),array('customer_id'=>$credit_obj['id'],'month'=>$month))){
-                    if ($this->db->insert_batch('sale_items', $items)) {
-                        if ($sid) {
-                            $this->deleteSale($sid);
-                        }
-                        return $sale_id;
-                    }
-                } else return false;
-            }else{
-                    if ($this->db->insert_batch('sale_items', $items)) {
-                        if ($sid) {
-                            $this->deleteSale($sid);
-                        }
-                        return $sale_id;
-                    }
+            if ($this->db->insert_batch('sale_items', $items)) {
+                if ($sid) {
+                    $this->deleteSale($sid);
+                }
+                return $sale_id;
             }
 
         }
@@ -798,7 +784,7 @@ class Pos_model extends CI_Model
 
                 $this->db->update('products', array('quantity' => $nQTY), array('id' => $product_id[$i]));
                 $this->db->update('warehouses_products', array('quantity' => $wh_qty), array('product_id' => $product_id[$i], 'warehouse_id' => $sales_info->warehouse_id));
-                $this->db->update('sale_items', array('return_qnt' => $qnt[$i],'return_date'=>date('Y-m-d H:i:s')), array('id' => $sales_item_id[$i], 'product_id' => $product_id[$i]));
+                $this->db->update('sale_items', array('return_qnt' => $qnt[$i], 'return_date' => date('Y-m-d H:i:s')), array('id' => $sales_item_id[$i], 'product_id' => $product_id[$i]));
                 $this->db->insert('sales_item_return', $return_obj);
             }
         }
@@ -1200,16 +1186,44 @@ class Pos_model extends CI_Model
         return FALSE;
 
     }
-	
-	public function getProductByIdAndWH($id,$wh_id)
-		{
-			$q = $this->db->get_where('warehouses_products', array('product_id' => $id,'warehouse_id' => $wh_id), 1);
-			if ($q->num_rows() > 0) {
-				return $q->row();
-			}
 
-			return FALSE;
-		}
+    public function getProductByIdAndWH($id, $wh_id)
+    {
+        $q = $this->db->get_where('warehouses_products', array('product_id' => $id, 'warehouse_id' => $wh_id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
 
+        return FALSE;
+    }
+
+
+    public function totalSale($sDate, $eDate, $customer_id)
+    {
+
+        $query = "SELECT  sum(total) as val FROM sales  WHERE sales.paid_by='Credit'  and sales.date between '" . $sDate . "' and '" . $eDate . "' and  sales.customer_id=" . $customer_id;
+
+        var_dump($query);
+        $q = $this->db->query($query);
+
+        if ($q->num_rows() > 0) {
+            return $q->row();
+
+        }
+        return FALSE;
+    }
+
+    public function getTodayCreditFromSales()
+    {
+        $date = date('Y-m-d');
+        $myQuery = "SELECT sum(COALESCE(total, 0 )) AS total
+			FROM sales
+			WHERE DATE(date) =  '{$date}' AND paid_by = 'Credit'
+			GROUP BY date";
+        $q = $this->db->query($myQuery, false);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+    }
 
 }

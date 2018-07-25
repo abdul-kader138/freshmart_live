@@ -425,22 +425,12 @@ class Reports extends MX_Controller
             $start_date = $this->ion_auth->fsd($start_date);
             $end_date = $this->ion_auth->fsd($end_date);
         }
-
-
-        $month=date("m", strtotime($start_date));
-        $sr = "( select sir.sales_id, sum((COALESCE( sir.return_qty, 0 )* COALESCE( sir.price, 0 ))) as return_val  from sales_item_return sir where sir.warehouse_id='{$warehouse}' group by sir.sales_id,sir.product_id) sReturn";
-
-        if($customer) $sc = "(SELECT customer_id,current_credit,credit_limit FROM `customers_credit_history` where customer_id='{$customer}' and month='{$month}') sCredit";
-        else $sc = "(SELECT customer_id,current_credit,credit_limit FROM `customers_credit_history` where month='{$month}') sCredit";
-
         $this->load->library('datatables');
         $this->datatables
-            ->select("sales.id as sid,date,biller_name, customer_name, sum(total) as gTotal,credit_limit,current_credit ", FALSE)
+            ->select("sales.id as sid,biller_name, cf4,customer_name, count(sales.id) as trar,sum(total) as gTotal,credit_limit", FALSE)
             ->from('sales')
-            ->join('sale_items', 'sale_items.sale_id=sales.id', 'left')
+            ->join('customers', 'customers.id=sales.customer_id', 'left')
             ->join('warehouses', 'warehouses.id=sales.warehouse_id', 'left')
-            ->join($sr, 'sales.id=sReturn.sales_id', 'left')
-            ->join($sc, 'sales.customer_id=sCredit.customer_id', 'left')
             ->group_by('sales.customer_id');
 
 

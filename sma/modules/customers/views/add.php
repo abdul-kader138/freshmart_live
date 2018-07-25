@@ -14,10 +14,9 @@ $(function() {
    	<?php $attrib = array('class' => 'form-horizontal'); echo form_open("module=customers&view=add", $attrib);?>
 
 <div class="control-group">
-  <label class="control-label" for="cf3" required="required" data-error="Customer Group is required">Customer Group</label>
+  <label class="control-label" for="cf3" data-error="Customer Group is required">Customer Group</label>
   <div class="controls">
     <select name="cf3" id="cf3">
-      <option value="">Select customer Group</option>
       <option value="Corporate">Corporate</option>
       <option value="Regular">Regular</option>
       
@@ -47,7 +46,17 @@ $(function() {
   <label class="control-label" for="phone"><?php echo $this->lang->line("phone"); ?></label>
   <div class="controls"> <input type="tel" name="phone" class="span4" pattern="[0-9]{7,15}" required="required" data-error="<?php echo $this->lang->line("phone").' '.$this->lang->line("is_required"); ?>" />
   </div>
-</div> 
+</div>
+<div class="control-group">
+    <label class="control-label" for="company">Designation</label>
+    <div class="controls"> <?php echo form_input($designation, '', 'class="span4 tip" title="'.$this->lang->line("bypass").'" id="designation"');?>
+    </div>
+</div>
+<div class="control-group">
+    <label class="control-label" for="company">Department</label>
+    <div class="controls"> <?php echo form_input($department, '', 'class="span4 tip" title="'.$this->lang->line("bypass").'" id="department"');?>
+    </div>
+</div>
 <div class="control-group">
   <label class="control-label" for="company"><?php echo $this->lang->line("company"); ?></label>
   <div class="controls"> <?php echo form_input($company, '', 'class="span4 tip" title="'.$this->lang->line("bypass").'" id="company" pattern=".{1,55}" required="required" data-error="'.$this->lang->line("company").' '.$this->lang->line("is_required").'"');?>
@@ -73,13 +82,18 @@ $(function() {
   <label class="control-label" for="postal_code"><?php echo $this->lang->line("postal_code"); ?></label>
   <div class="controls"> <?php echo form_input($postal_code, '', 'class="span4" id="postal_code"pattern=".{4,8}" data-error="'.$this->lang->line("postal_code").' '.$this->lang->line("is_required").'"');?>
   </div>
-</div> 
+</div>
+
 <div class="control-group" style="display:none">
   <label class="control-label" for="country"><?php echo $this->lang->line("country"); ?></label>
   <div class="controls"> <?php echo form_input($country, '', 'class="span4" id="country" pattern=".{2,55}" data-error="'.$this->lang->line("country").' '.$this->lang->line("is_required").'"');?>
   </div>
-</div> 
-
+</div>
+<div class="control-group">
+    <label class="control-label" for="credit">Credit Limit</label>
+    <div class="controls"> <?php echo form_input($credit_limit, '', 'class="span4 tip" required="required" title="'.$this->lang->line("bypass").'" id="$credit_limit"');?>
+    </div>
+</div>
 
 <div class="control-group">
   <label class="control-label" for="cf1">Discount Set As</label>

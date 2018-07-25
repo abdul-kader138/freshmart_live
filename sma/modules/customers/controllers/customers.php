@@ -58,7 +58,7 @@ class Customers extends MX_Controller
         $this->load->library('datatables');
         if ($userHasAuthority) {
             $this->datatables
-                ->select("id, name, company, phone, email, cf4, cf1, cf2")
+                ->select("id, name, company, phone, email, cf4, cf1, credit_limit")
                 ->from("customers")
                 ->add_column("Actions",
                     "<center>			<a class=\"tip\" title='" . $this->lang->line("edit_customer") . "' href='index.php?module=customers&amp;view=edit&amp;id=$1'><i class=\"icon-edit\"></i></a>
@@ -98,6 +98,7 @@ class Customers extends MX_Controller
         $this->form_validation->set_rules('address', $this->lang->line("address"), 'required|xss_clean');
 
         $this->form_validation->set_rules('cf1', 'Discount set is required', 'required|xss_clean');
+        $this->form_validation->set_rules('credit_limit', 'Credit Limit is required', 'required|xss_clean');
         $this->form_validation->set_rules('cf5', 'Discount amount is required', 'required|xss_clean');
         $this->form_validation->set_rules('cf3', 'Customer Group is required ', 'required|xss_clean');
         $this->form_validation->set_rules('cf4', 'Customer Group', 'required|xss_clean');
@@ -123,7 +124,10 @@ class Customers extends MX_Controller
                 'state' => $this->input->post('state'),
                 'postal_code' => $this->input->post('postal_code'),
                 'country' => $this->input->post('country'),
-                'phone' => $this->input->post('phone')
+                'phone' => $this->input->post('phone'),
+                'department' => $this->input->post('department'),
+                'designation' => $this->input->post('designation'),
+                'credit_limit' => $this->input->post('credit_limit')
             );
         }
 
@@ -244,6 +248,7 @@ class Customers extends MX_Controller
         $this->form_validation->set_rules('address', $this->lang->line("address"), 'required|xss_clean');
 
         $this->form_validation->set_rules('cf1', 'Discount set is required', 'required|xss_clean');
+        $this->form_validation->set_rules('credit_limit', 'Credit Limit is required', 'required|xss_clean');
         $this->form_validation->set_rules('cf5', 'Discount amount is required', 'required|xss_clean');
         $this->form_validation->set_rules('cf3', 'Customer Group is required ', 'required|xss_clean');
         $this->form_validation->set_rules('cf4', 'Customer Group', 'required|xss_clean');
@@ -268,7 +273,10 @@ class Customers extends MX_Controller
                 'state' => $this->input->post('state'),
                 'postal_code' => $this->input->post('postal_code'),
                 'country' => $this->input->post('country'),
-                'phone' => $this->input->post('phone')
+                'phone' => $this->input->post('phone'),
+                'department' => $this->input->post('department'),
+                'designation' => $this->input->post('designation'),
+                'credit_limit' => $this->input->post('credit_limit')
             );
         }
 
