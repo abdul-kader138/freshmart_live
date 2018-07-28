@@ -1198,7 +1198,7 @@ class Pos_model extends CI_Model
     }
 
 
-    public function totalSale($sDate, $eDate, $customer_id)
+    public function totalCreditSale($sDate, $eDate, $customer_id)
     {
 
         $query = "SELECT  sum(total) as val FROM sales  WHERE sales.paid_by='Credit'  and sales.date between '" . $sDate . "' and '" . $eDate . "' and  sales.customer_id=" . $customer_id;

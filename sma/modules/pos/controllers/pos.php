@@ -399,24 +399,22 @@ class Pos extends MX_Controller
                 $current_customer=$this->pos_model->getCustomerById($customer_id);
 //                $customer_credit_limits=$this->pos_model->getCustomerCreditById($customer_id);
                 if($paid_by == 'Credit') {
-
                     //check for regular customer and its credit
                     $firstDay= date("Y-m-d", strtotime("first day of this month"));
                     $lastDay= date("Y-m-d", strtotime("last day of this month"));
-                    $total_credit_sale=$this->pos_model->totalSale($firstDay,$lastDay,$customer_id);
-                    if (!$current_customer->credit_limit || $current_customer->credit_limit <= ($total_credit_sale->val + $gTotal)) {
+                    $total_credit_sale=$this->pos_model->totalCreditSale($firstDay,$lastDay,$customer_id);
+                    if (!$current_customer->credit_limit || $current_customer->credit_limit < ($total_credit_sale->val + $gTotal)) {
                         $this->session->set_flashdata('message', "Customer don't have sufficient credit for this purchase.");
                         redirect("module=pos", 'refresh');
                     }
                 }
 				foreach($items as $item){
 					$getDetails=$this->pos_model->getProductByIdAndWH($item['product_id'],$warehouse_id);
-				     if($getDetails->quantity<$item['quantity']){
+				     if($getDetails->quantity < $item['quantity']){
                       $this->session->set_flashdata('message', "Item(".$item['product_name'].") qty is not available at warehouse");
                       redirect("module=pos", 'refresh');
 						}
 					}
-//                if ($saleID = $this->pos_model->addSale($saleDetails, $items, $warehouse_id, $did,$credit_obj)) {
                 if ($saleID = $this->pos_model->addSale($saleDetails, $items, $warehouse_id, $did)) {
                     $this->session->set_flashdata('success_message', $this->lang->line("sale_added"));
                     redirect("module=pos&view=view_invoice&id=" . $saleID, 'refresh');
