@@ -404,8 +404,7 @@ class Pos extends MX_Controller
                     $firstDay= date("Y-m-d", strtotime("first day of this month"));
                     $lastDay= date("Y-m-d", strtotime("last day of this month"));
                     $total_credit_sale=$this->pos_model->totalSale($firstDay,$lastDay,$customer_id);
-                    var_dump($total_credit_sale);
-                    if (!$current_customer->credit_limit || $current_customer->credit_limit < ($total_credit_sale->val + $gTotal)) {
+                    if (!$current_customer->credit_limit || $current_customer->credit_limit <= ($total_credit_sale->val + $gTotal)) {
                         $this->session->set_flashdata('message', "Customer don't have sufficient credit for this purchase.");
                         redirect("module=pos", 'refresh');
                     }

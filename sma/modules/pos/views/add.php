@@ -643,6 +643,7 @@ $(document).ready(function () {
     var count = 1;
     var total = 0;
     var total_discount = 0;
+    var new_pr_discount = 0;
     var an = 1;
     var discount_method = <?php echo DISCOUNT_METHOD; ?>;
     var tax_rates = <?php echo json_encode($tax_rates); ?>;
@@ -838,6 +839,7 @@ $(document).ready(function () {
 
     $("#updateRow").click(function () {
         $(this).text('<?php echo $this->lang->line('saving'); ?>');
+        var new_pr_discount=0;
         var rw_no = $('#itemRowId').val();
         old_val = $('#tax_rate-' + rw_no).val();
         old_ds = $('#discount-' + rw_no).val();

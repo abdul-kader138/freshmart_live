@@ -1202,8 +1202,6 @@ class Pos_model extends CI_Model
     {
 
         $query = "SELECT  sum(total) as val FROM sales  WHERE sales.paid_by='Credit'  and sales.date between '" . $sDate . "' and '" . $eDate . "' and  sales.customer_id=" . $customer_id;
-
-        var_dump($query);
         $q = $this->db->query($query);
 
         if ($q->num_rows() > 0) {

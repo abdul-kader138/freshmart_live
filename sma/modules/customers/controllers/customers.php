@@ -349,7 +349,7 @@ class Customers extends MX_Controller
                 }
                 $titles = array_shift($arrResult);
 
-                $keys = array('name', 'email', 'phone', 'company', 'address', 'city', 'state', 'postal_code', 'country');
+                $keys = array('name', 'email', 'phone', 'company', 'address', 'city', 'state', 'postal_code', 'country','designation','department','credit_limit','cf4','emp_id','cf1','cf3','cf5');
 
                 $final = array();
 

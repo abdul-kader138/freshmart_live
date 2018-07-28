@@ -15,7 +15,7 @@
 |
 */
 //$allowed_host=['http://192.168.3.229/freshmart','http://27:147.133.105:80/freshmart'];
-$config['base_url']	= 'http://localhost/freshmart_live';
+$config['base_url']	= 'https://localhost/freshmart_live';
 //$config['base_url']	= in_array($allowed_host);
 
 /*
