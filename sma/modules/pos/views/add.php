@@ -1963,8 +1963,8 @@ $("#payment").click(function () {
                         return false;
                     }
                     $("#balance").empty();
-                    var return_amount = 0;
-                    if ($("#twt_return").val()) return_amount = $("#twt_return").val();
+                    var return_amount=0;
+                    if($("#twt_return").val()) return_amount=$("#twt_return").val();
                     var balance = (paid - twt);
                     balance = parseFloat(balance).toFixed(2);
                     $("#balance").append(balance);
@@ -1988,7 +1988,7 @@ $("#payment").click(function () {
             $('.pcash').hide();
             $('.pcc_chash').hide();
             $('.pcc_chash').hide();
-        } else if (p_val == 'CC_cash') {
+        }else if (p_val == 'CC_cash') {
             $('#paid-amount').val(0);
             $('#pcc_holder').val("");
             $('#cc_amount').val("");
@@ -1997,13 +1997,15 @@ $("#payment").click(function () {
             $('.pcash').hide();
             $('.pcheque').hide();
             $('.pcc_chash').show();
-//            $('.pcash').show();
+            $('.pcash').show();
 
 
             $('#paid-amount').val("");
             $('#cc_amount').val("");
             $('#pcc_holder').val("");
             $('#pcc').val("");
+
+
             $('input[id^="paid-amount"]').keydown(function (e) {
                 var cardVal = $('#cc_amount').val();
                 if (cardVal == undefined || cardVal == '') cardVal = 0;
@@ -2014,8 +2016,8 @@ $("#payment").click(function () {
                         return false;
                     }
                     $("#balance").empty();
-                    var return_amount = 0;
-                    if ($("#twt_return").val()) return_amount = $("#twt_return").val();
+                    var return_amount=0;
+                    if($("#twt_return").val()) return_amount=$("#twt_return").val();
                     var balance = ((paid + cardVal) - (twt));
                     balance = parseFloat(balance).toFixed(2);
                     $("#balance").append(balance);
@@ -2024,13 +2026,13 @@ $("#payment").click(function () {
                     return false;
                 }
             });
+
+        } else {
+            $('.pcheque').hide();
+            $('.pcc').hide();
+            $('.pcash').hide();
+            $('.pcc_chash').hide();
         }
-//        } else {
-//            $('.pcheque').hide();
-//            $('.pcc').hide();
-//            $('.pcash').hide();
-//            $('.pcc_chash').hide();
-//        }
     });
 
     $('#paid-amount').keyboard({
@@ -2068,8 +2070,8 @@ $("#payment").click(function () {
             var paid = 0;
             var selectedVal = $('#paid_by').find(":selected").val();
 
-            var return_amount = 0;
-            if ($("#twt_return").val()) return_amount = $("#twt_return").val();
+            var return_amount=0;
+            if($("#twt_return").val()) return_amount=$("#twt_return").val();
             if (selectedVal == 'CC_cash') {
                 var cardVal = $('#cc_amount').val();
                 var cashVal = $('#paid-amount').val();

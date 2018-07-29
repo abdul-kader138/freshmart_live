@@ -552,6 +552,10 @@
                     </li>
                     <li class="divider"></li>
                     <li>
+                        <a href="<?php echo base_url(); ?>index.php?module=reports&view=credit_sales"><?php echo $this->lang->line('credit_sale_reports'); ?></a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
                         <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales_margin">Sales Margin Report</a>
                     </li>
 					
@@ -613,6 +617,9 @@ if ($this->ion_auth->in_group('viewer')) {
 					</li>
                 <li>
                     <a href="<?php echo base_url(); ?>index.php?module=reports&view=sales"><?php echo $this->lang->line('sales_report'); ?></a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url(); ?>index.php?module=reports&view=credit_sales"><?php echo $this->lang->line('credit_sale_reports'); ?></a>
                 </li>
 				<li>
 					<a href="<?php echo base_url(); ?>index.php?module=reports&view=customer_sales">Sales Report (Customer Wise)</a>

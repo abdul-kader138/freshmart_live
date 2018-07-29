@@ -674,38 +674,31 @@ class Sales_model extends CI_Model
 			return $data;
 		}
 	}
-	
-	public function deleteInvoice($id)
-	    {
-	        $inv = $this->getInvoiceByID($id);
-            $customer_credit_limits=$this->getCustomerCreditById($inv->customer_id,$inv->date);
-        if($inv->paid_by=='Credit'){
-            $credit_amount=$customer_credit_limits->current_credit + $inv->total;
+
+    public function deleteInvoice($id)
+    {
+        $inv = $this->getInvoiceByID($id);
+        $warehouse_id = $inv->warehouse_id;
+        $items = $this->getAllInvoiceItems($id);
+
+        foreach($items as $item) {
+            $product_id = $item->product_id;
+            $item_details = $this->getProductQuantity($product_id, $warehouse_id);
+            $pr_quantity = $item_details['quantity'];
+            $inv_quantity = $item->quantity;
+            $new_quantity = $pr_quantity + $inv_quantity;
+
+            $this->updateQuantity($product_id, $warehouse_id, $new_quantity);
+            $this->usQTY($product_id, $item->quantity);
         }
-	        $warehouse_id = $inv->warehouse_id;
-	        $items = $this->getAllInvoiceItems($id);
-	       
-	        foreach($items as $item) {
-	            $product_id = $item->product_id;
-	            $item_details = $this->getProductQuantity($product_id, $warehouse_id);
-	            $pr_quantity = $item_details['quantity'];
-	            $inv_quantity = $item->quantity;
-	            $new_quantity = $pr_quantity + $inv_quantity;
-	           
-	            $this->updateQuantity($product_id, $warehouse_id, $new_quantity);
-                    $this->usQTY($product_id, $item->quantity);
-	        }
-	        if($this->db->delete('sale_items', array('sale_id' => $id)) && $this->db->delete('sales', array('id' => $id))) {
-                if($inv->paid_by == 'Credit') {
-                    if ($this->db->update('customers_credit_history', array('current_credit'=>$credit_amount), array('id'=> $customer_credit_limits->id))) return true;
-                    else return false;
-                }
-                return true;
-	        }
-	    return FALSE;
-	    }
-		
-		public function deleteQuote($id)
+
+        if($this->db->delete('sale_items', array('sale_id' => $id)) && $this->db->delete('sales', array('id' => $id))) {
+            return true;
+        }
+        return FALSE;
+    }
+
+    public function deleteQuote($id)
 	    {
 	       
 	        if($this->db->delete('quote_items', array('quote_id' => $id)) && $this->db->delete('quotes', array('id' => $id))) {
