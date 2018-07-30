@@ -822,7 +822,6 @@ $(document).ready(function () {
             dataType: "html",
             success: function (data) {
                 ts_data = data;
-                console.log(data);
             },
             error: function () {
                 bootbox.alert('<?php echo $this->lang->line('request_failed'); ?>');
@@ -842,7 +841,7 @@ $(document).ready(function () {
         var new_pr_discount=0;
         var rw_no = $('#itemRowId').val();
         old_val = $('#tax_rate-' + rw_no).val();
-        old_ds = $('#discount-' + rw_no).val();
+        old_ds = $('#discount-' + Number(rw_no)).val();
         <?php if (PRODUCT_SERIAL) { ?>
         $('#serial-' + rw_no).val($('#item_serial_no').val());
         <?php } ?>
@@ -935,9 +934,9 @@ $(document).ready(function () {
         <?php } else { ?>
         var g_total = total + tax_value + tax_value2;
         <?php } ?>
-        grand_total = Math.abs(g_total).toFixed(2);
+        grand_total = Math.abs(Number(g_total)).toFixed(2);
         $("#total-payable").empty();
-        $("#total-payable").append(grand_total);
+        $("#total-payable").append(Number(grand_total));
         <?php if (PRODUCT_SERIAL) { ?>$('#item_serial_no').val('');
         <?php } ?>
         <?php if (TAX1) { ?>$("#tax").empty();
@@ -945,7 +944,7 @@ $(document).ready(function () {
         $('#item_tax').val('');
         <?php } ?>
         <?php if (DISCOUNT_OPTION == 2) { ?>$("#ds").empty();
-        $("#ds").append(current_discount);
+        $("#ds").append(Number(current_discount));
         $('#item_discount').val('');
         <?php } ?>
 
@@ -1137,7 +1136,7 @@ $("#saletbl").on("click", 'button[class^="del_row"]', function () {
     <?php } ?>
     var g_total = (total + tax_value + tax_value2) - total_discount;
     current_discount = Math.abs(total_discount).toFixed(2);
-    grand_total = Math.abs(g_total).toFixed(2);
+    grand_total = Math.abs(Number(g_total)).toFixed(2);
 
     $("#total-payable").empty();
     $("#total-payable").append(grand_total);
@@ -1152,7 +1151,7 @@ $("#saletbl").on("click", 'button[class^="del_row"]', function () {
     $("#tax2").append(current_tax2);
     <?php } ?>
     <?php if (DISCOUNT_OPTION == 2) { ?>$("#ds").empty();
-    $("#ds").append(current_discount);
+    $("#ds").append(Number(current_discount));
     <?php } ?>
 
     an--;
@@ -1294,7 +1293,7 @@ function add_row() {
         if (discount_type == 1) {
             new_discount_value = (total * discount) / 100;
         }
-        total_discount = new_discount_value;
+        total_discount = Number(new_discount_value);
         current_discount = parseFloat(total_discount).toFixed(2);
         <?php } elseif (DISCOUNT_METHOD == 2 && DISCOUNT_OPTION == 1) { ?>
         if (discount_type == 2) {
@@ -1314,7 +1313,7 @@ function add_row() {
         if (discount_type2 == 1) {
             new_discount_value2 = (item_price * discount2) / 100;
         }
-        total_discount += new_discount_value2;
+        total_discount += Number(new_discount_value2);
         current_discount = parseFloat(total_discount).toFixed(2);
         <?php } elseif (DISCOUNT_OPTION == 2 && DISCOUNT_METHOD == 2) { ?>
         if (discount_type2 == 2) {
@@ -1327,7 +1326,8 @@ function add_row() {
         current_discount = parseFloat(total_discount).toFixed(2);
         <?php } ?>
         var g_total = total + tax_value + tax_value2 - total_discount;
-        grand_total = parseFloat(g_total).toFixed(2);
+        grand_total = parseFloat(Number(g_total)).toFixed(2);
+
 
         $("#total-payable").empty();
         $("#total-payable").append(grand_total);
@@ -1343,7 +1343,7 @@ function add_row() {
         <?php } ?>
         <?php if (DISCOUNT_OPTION == 1 || DISCOUNT_OPTION == 2) { ?>
         $("#ds").empty();
-        $("#ds").append(current_discount);
+        $("#ds").append(Number(current_discount));
         <?php } ?>
 
         count++;
@@ -1517,7 +1517,7 @@ function key_pad() {
             <?php } ?>
 
             var g_total = (total + tax_value + tax_value2) - total_discount;
-            grand_total = parseFloat(g_total).toFixed(2);
+            grand_total = parseFloat(Number(g_total)).toFixed(2);
 
             $("#total-payable").empty();
             $("#total").empty();
@@ -1530,9 +1530,9 @@ function key_pad() {
             <?php } ?>
             <?php if (DISCOUNT_OPTION == 1 || DISCOUNT_OPTION == 2) { ?>
             $("#ds").empty();
-            $("#ds").append(current_discount);
+            $("#ds").append(Number(current_discount));
             <?php } ?>
-            $("#total-payable").append(grand_total);
+            $("#total-payable").append(Number(grand_total));
             $("#total").append(current);
             $("#count").append(count - 1);
 
@@ -1786,7 +1786,7 @@ if (discount_type2 == 2) {
 if (discount_type2 == 1) {
     new_discount_value2 = (parseFloat(item_price) * discount2) / 100;
 }
-total_discount += new_discount_value2;
+total_discount += Number(new_discount_value2);
 current_discount = parseFloat(total_discount).toFixed(2);
 <?php } elseif (DISCOUNT_OPTION == 2 && DISCOUNT_METHOD == 2) { ?>
 if (discount_type2 == 2) {
@@ -1795,11 +1795,11 @@ if (discount_type2 == 2) {
 if (discount_type2 == 1) {
     new_discount_value2 = ((parseFloat(item_price) + new_tax_value) * discount2) / 100;
 }
-total_discount += new_discount_value2;
+total_discount += Number(new_discount_value2);
 current_discount = parseFloat(total_discount).toFixed(2);
 <?php } ?>
 var g_total = total + tax_value + tax_value2 - total_discount;
-grand_total = parseFloat(g_total).toFixed(2);
+grand_total = parseFloat(Number(g_total)).toFixed(2);
 $("#total-payable").empty();
 $("#total-payable").append(grand_total);
 $("#total").empty();
@@ -1814,7 +1814,7 @@ $("#tax2").append(current_tax2);
 <?php } ?>
 <?php if (DISCOUNT_OPTION == 1 || DISCOUNT_OPTION == 2) { ?>
 $("#ds").empty();
-$("#ds").append(current_discount);
+$("#ds").append(Number(current_discount));
 <?php } ?>
 
 
@@ -1859,7 +1859,7 @@ $("#cancel").click(function () {
             current = parseFloat(total).toFixed(2);
             current_tax = parseFloat(tax_value).toFixed(2);
             var g_total = total + tax_value;
-            grand_total = parseFloat(g_total).toFixed(2);
+            grand_total = parseFloat(Number(g_total)).toFixed(2);
             $("#total-payable").empty();
             $("#total").empty();
             $("#count").empty();
@@ -1871,7 +1871,7 @@ $("#cancel").click(function () {
             <?php } ?>
             <?php if (DISCOUNT_OPTION == 1 || DISCOUNT_OPTION == 2) { ?>
             $("#ds").empty();
-            $("#ds").append(current_tax);
+            $("#ds").append(Number(current_tax));
             <?php } ?>
             $("#total-payable").append(grand_total);
             $("#total").append(current);
@@ -1988,7 +1988,7 @@ $("#payment").click(function () {
             $('.pcash').hide();
             $('.pcc_chash').hide();
             $('.pcc_chash').hide();
-        }else if (p_val == 'CC_cash') {
+        } else if (p_val == 'CC_cash') {
             $('#paid-amount').val(0);
             $('#pcc_holder').val("");
             $('#cc_amount').val("");
@@ -2171,8 +2171,8 @@ $("#paymentModal").on("click", '#submit-sale', function () {
     if (selectedVal == 'CC_cash') {
         var cardVal = $('#cc_amount').val();
         var cashVal = $('#paid-amount').val();
-        var return_amount = 0;
-        if ($("#twt_return").val()) return_amount = $("#twt_return").val();
+        var return_amount=0;
+        if($("#twt_return").val()) return_amount=$("#twt_return").val();
         if (cardVal == undefined || cardVal == '') cardVal = 0;
         if (cashVal == undefined || cashVal == '') cashVal = 0;
         paid = parseFloat(cashVal) + parseFloat(cardVal);
@@ -2193,8 +2193,8 @@ $("#paymentModal").on("click", '#submit-sale', function () {
     if (selectedVal == 'Cash') {
         var cashVal = $('#paid-amount').val();
         paid = parseFloat(cashVal);
-        var return_amount = 0;
-        if ($("#twt_return").val()) return_amount = $("#twt_return").val();
+        var return_amount=0;
+        if($("#twt_return").val()) return_amount=$("#twt_return").val();
         if (paid < twt) {
             bootbox.alert('<?php echo $this->lang->line('paid_l_t_payable'); ?>');
             $(this).val('');
@@ -2291,7 +2291,7 @@ success: function (data) {
             sale_total = 0;
         }
         if (data.g_total != null) {
-            g_total = parseFloat(data.g_total);
+            g_total = parseFloat(Number(data.g_total));
         } else {
             g_total = 0;
         }
@@ -2327,13 +2327,13 @@ tax_value = sale_tax1;
 tax_value2 = sale_tax2;
 total_discount = sale_discount;
 current = parseFloat(total).toFixed(2);
-grand_total = parseFloat(g_total).toFixed(2);
+grand_total = parseFloat(Number(g_total)).toFixed(2);
 current_tax = parseFloat(tax_value).toFixed(2);
 current_tax2 = parseFloat(tax_value2).toFixed(2);
 current_discount = parseFloat(total_discount).toFixed(2);
 
 $("#total-payable").empty();
-$("#total-payable").append(grand_total);
+$("#total-payable").append(Number(grand_total));
 $("#total").empty();
 $("#total").append(current);
 $("#count").empty();
@@ -2346,7 +2346,7 @@ $("#tax2").append(current_tax2);
 <?php } ?>
 <?php if (DISCOUNT_OPTION == 1 || DISCOUNT_OPTION == 2) { ?>
 $("#ds").empty();
-$("#ds").append(current_discount);
+$("#ds").append(Number(current_discount));
 <?php } ?>
 
 <?php } ?>
