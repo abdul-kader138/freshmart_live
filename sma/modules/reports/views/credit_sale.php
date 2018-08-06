@@ -138,20 +138,14 @@ if ($this->input->post('submit')) {
             ],
 
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
-                var row_total = 0.0;
-                var tax_total = 0;
-                var tax2_total = 0;
-                var return_total = 0.0;
-                var discount_total = 0.0;
-                var gross_total = 0.0;
-//                for (var i = 0; i < aaData.length; i++) {
-//                    tax_total += parseFloat(aaData[aiDisplay[i]][6]);
-//                    tax2_total += parseFloat(aaData[aiDisplay[i]][7]);
-//                    if (aaData[aiDisplay[i]][3] != null || aaData[aiDisplay[i]][3] != undefined) row_total += parseFloat(aaData[aiDisplay[i]][3]);
-//                }
-//
-//                var nCells = nRow.getElementsByTagName('th');
-//                nCells[3].innerHTML = currencyFormate(parseFloat(row_total).toFixed(2));
+                var total = 0;
+                var credit = 0;
+                for (var i = 0; i < aaData.length; i++) {
+                    if (aaData[aiDisplay[i]][4] != null || aaData[aiDisplay[i]][4] != undefined) total += parseFloat(aaData[aiDisplay[i]][4]);
+                }
+
+                var nCells = nRow.getElementsByTagName('th');
+                nCells[4].innerHTML = currencyFormate(parseFloat(total).toFixed(2));
             }
 
         }).columnFilter({
