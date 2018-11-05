@@ -70,8 +70,8 @@ class Home_model extends CI_Model
 	
 	public function getChartData() 
 	{
-		$myQuery = "SELECT S.month, COALESCE(S.sales, 0) as sales, COALESCE( P.purchases, 0 ) as purchases, COALESCE(S.tax1, 0) as tax1, COALESCE(S.tax2, 0) as tax2, COALESCE( P.ptax, 0 ) as ptax FROM ( SELECT date_format(date, '%Y-%m') Month, SUM(sale_items.quantity*sale_items.unit_price) Sales, SUM(total_tax) tax1, SUM(total_tax2) tax2 FROM sales inner join sale_items on sales.id=sale_items.sale_id WHERE sales.date >= date_sub( now( ) , INTERVAL 6 MONTH ) GROUP BY date_format(date, '%Y-%m')) S LEFT JOIN ( SELECT date_format(mrr_date, '%Y-%m') Month, SUM(tax_val) ptax, SUM(inv_val) purchases FROM make_mrr GROUP BY date_format(mrr_date, '%Y-%m')) P ON S.Month = P.Month GROUP BY S.Month ORDER BY S.Month";
-		$q = $this->db->query($myQuery);
+		$myQuery = "SELECT S.month, COALESCE(S.sales, 0) as sales, COALESCE( P.purchases, 0 ) as purchases, COALESCE(S.tax1, 0) as tax1, COALESCE(S.tax2, 0) as tax2, COALESCE( P.ptax, 0 ) as ptax FROM ( SELECT date_format(date, '%Y-%m') Month, SUM(sales.total) Sales, SUM(total_tax) tax1, SUM(total_tax2) tax2 FROM sales WHERE sales.date >= date_sub( now( ) , INTERVAL 6 MONTH ) GROUP BY date_format(date, '%Y-%m')) S LEFT JOIN ( SELECT date_format(mrr_date, '%Y-%m') Month, SUM(tax_val) ptax, SUM(inv_val) purchases FROM make_mrr GROUP BY date_format(mrr_date, '%Y-%m')) P ON S.Month = P.Month GROUP BY S.Month ORDER BY S.Month";
+        $q = $this->db->query($myQuery);
 		if($q->num_rows() > 0) {
 			foreach (($q->result()) as $row) {
 				$data[] = $row;
